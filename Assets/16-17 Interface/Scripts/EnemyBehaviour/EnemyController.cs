@@ -5,7 +5,7 @@ using UnityEngine;
 namespace _16_17_Interface.Scripts.EnemyBehaviour
 {
     [RequireComponent(typeof(Collider))]
-    public class EnemyController : MonoBehaviour, ITargetProvider
+    public class EnemyController : MonoBehaviour, ITargetProvider, IKillable
     {
         [SerializeField] private ParticleSystem _particlesDie;
         
@@ -30,7 +30,7 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour
             _targetBehaviour = targetBehaviour;
         }
 
-        public void Destroy()
+        public void Die()
         {
             Destroy(gameObject);
             

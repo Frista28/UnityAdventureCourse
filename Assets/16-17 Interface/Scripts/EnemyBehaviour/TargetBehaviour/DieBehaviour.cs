@@ -6,11 +6,11 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour.TargetBehaviour
 {
     public class DieBehaviour : IBehaviour
     {
-        private EnemyController _selfController;
+        private IKillable _taget;
 
-        public DieBehaviour(EnemyController self)
+        public DieBehaviour(IKillable target)
         {
-            _selfController = self;
+            _taget = target;
         }
         
         public void Execute()
@@ -20,7 +20,7 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour.TargetBehaviour
 
         private void Die()
         {
-            _selfController.Destroy();
+            _taget.Die();
         }
     }
 }
