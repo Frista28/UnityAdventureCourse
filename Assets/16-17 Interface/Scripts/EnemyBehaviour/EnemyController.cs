@@ -14,10 +14,10 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour
     {
         [SerializeField] private ParticleSystem _particlesDie;
         
-        private EnemyTargetBehaviourTypes _targetBehaviourType;
+        private EnemyBehaviourTypes _targetBehaviourType;
         
-        private IIdleBehaviour _idleBehaviour;
-        private ITargetBehaviour _targetBehaviour;
+        private IBehaviour _idleBehaviour;
+        private IBehaviour _targetBehaviour;
         
         private bool _isTarget;
         private bool _isStayInTarget;
@@ -25,32 +25,9 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour
         private float _timerToTarget;
         private float _timeHoldTarget = 1f;
         
-        public void Initialization(EnemyIdleBehaviourTypes idleBehaviourType, EnemyTargetBehaviourTypes targetBehaviourType, List<Transform> wayPoints = null)
+        public void Initialization(IBehaviour idleBehaviour, EnemyBehaviourTypes targetBehaviourType, List<Transform> wayPoints = null)
         {
-            switch (idleBehaviourType)
-            {
-                case EnemyIdleBehaviourTypes.Idle:
-                    _idleBehaviour = new StayBehaviour();
-                    break;
-                
-                case EnemyIdleBehaviourTypes.TargetPointsWalk:
-                    if (wayPoints == null)
-                    {
-                        Debug.LogError($"Не переданы точки для патрулирования для {gameObject.name}");
-                        return;
-                    }
-                    
-                    _idleBehaviour = new PatrolBehaviour(transform, wayPoints);
-                    break;
-                
-                case EnemyIdleBehaviourTypes.RandomWalk:
-                    _idleBehaviour = new RandomWalkBehaviour(transform);
-                    break;
-                
-                default:
-                    Debug.LogError("Не известный тип базового поведения");
-                    return;
-            }
+            _idleBehaviour = idleBehaviour;
 
             _isTarget = false;
 
@@ -90,15 +67,15 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour
                 
                 switch (_targetBehaviourType)
                 {
-                    case EnemyTargetBehaviourTypes.RunOut:
+                    case EnemyBehaviourTypes.RunOut:
                         _targetBehaviour = new RunOutBehaviour(transform, playerController.transform);
                         break;
                 
-                    case EnemyTargetBehaviourTypes.RunIn:
+                    case EnemyBehaviourTypes.RunIn:
                         _targetBehaviour = new RunInBehaviour(transform, playerController.transform);
                         break;
                 
-                    case EnemyTargetBehaviourTypes.Die:
+                    case EnemyBehaviourTypes.Die:
                         _targetBehaviour = new DieBehaviour(this);
                         break;
                 

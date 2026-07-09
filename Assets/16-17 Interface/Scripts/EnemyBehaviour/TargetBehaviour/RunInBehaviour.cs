@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _16_17_Interface.Scripts.EnemyBehaviour.TargetBehaviour
 {
-    public class RunInBehaviour : ITargetBehaviour
+    public class RunInBehaviour : IBehaviour
     {
         private readonly Transform _self;
         private readonly Transform _target;

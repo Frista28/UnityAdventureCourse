@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _16_17_Interface.Scripts.EnemyBehaviour.TargetBehaviour
 {
-    public class DieBehaviour : ITargetBehaviour
+    public class DieBehaviour : IBehaviour
     {
         private EnemyController _selfController;
 

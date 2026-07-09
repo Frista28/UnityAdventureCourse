@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _16_17_Interface.Scripts.EnemyBehaviour.IdleBehaviour
 {
-    public class RandomWalkBehaviour : IIdleBehaviour
+    public class RandomWalkBehaviour : IBehaviour
     {
         private readonly Transform _self;
         

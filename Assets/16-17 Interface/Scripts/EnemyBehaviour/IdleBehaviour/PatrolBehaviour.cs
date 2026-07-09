@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _16_17_Interface.Scripts.EnemyBehaviour.IdleBehaviour
 {
-    public class PatrolBehaviour : IIdleBehaviour
+    public class PatrolBehaviour : IBehaviour
     {
         private readonly Transform _self;
         
