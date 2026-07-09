@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using _16_17_Interface.Scripts.EnemyBehaviour.Enums;
 using _16_17_Interface.Scripts.EnemyBehaviour.IdleBehaviour;
+using _16_17_Interface.Scripts.EnemyBehaviour.TargetBehaviour;
 using _16_17_Interface.Scripts.Interfaces;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _16_17_Interface.Scripts.EnemyBehaviour
 {
@@ -52,8 +52,29 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour
                 Debug.LogError("Не получилось установить поведение");
                 return;
             }
+
+            IBehaviour targetBehaviour;
             
-            newEnemy.Initialization(idleBehaviour, _targetBehaviourType, _wayPoints);
+            switch (_targetBehaviourType)
+            {
+                case EnemyBehaviourTypes.RunOut:
+                    targetBehaviour = new RunOutBehaviour(newEnemy.transform, newEnemy);
+                    break;
+                
+                case EnemyBehaviourTypes.RunIn:
+                    targetBehaviour = new RunInBehaviour(newEnemy.transform, newEnemy);
+                    break;
+                
+                case EnemyBehaviourTypes.Die:
+                    targetBehaviour = new DieBehaviour(newEnemy);
+                    break;
+                
+                default:
+                    Debug.LogError("Не известный тип активного поведения");
+                    return;
+            }
+            
+            newEnemy.Initialization(idleBehaviour, targetBehaviour);
         }
     }
 }

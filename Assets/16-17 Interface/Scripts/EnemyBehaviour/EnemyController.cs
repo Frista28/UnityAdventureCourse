@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using _16_17_Interface.Scripts.EnemyBehaviour.Enums;
-using _16_17_Interface.Scripts.EnemyBehaviour.IdleBehaviour;
-using _16_17_Interface.Scripts.EnemyBehaviour.TargetBehaviour;
-using _16_17_Interface.Scripts.Interfaces;
+﻿using _16_17_Interface.Scripts.Interfaces;
 using _16_17_Interface.Scripts.PlayerBehaviour;
 using UnityEngine;
 
 namespace _16_17_Interface.Scripts.EnemyBehaviour
 {
     [RequireComponent(typeof(Collider))]
-    public class EnemyController : MonoBehaviour
+    public class EnemyController : MonoBehaviour, ITargetProvider
     {
         [SerializeField] private ParticleSystem _particlesDie;
-        
-        private EnemyBehaviourTypes _targetBehaviourType;
         
         private IBehaviour _idleBehaviour;
         private IBehaviour _targetBehaviour;
@@ -25,13 +18,16 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour
         private float _timerToTarget;
         private float _timeHoldTarget = 1f;
         
-        public void Initialization(IBehaviour idleBehaviour, EnemyBehaviourTypes targetBehaviourType, List<Transform> wayPoints = null)
+        public Transform Target { get; private set; }
+        public bool HasTarget { get; private set; }
+        
+        public void Initialization(IBehaviour idleBehaviour, IBehaviour targetBehaviour)
         {
             _idleBehaviour = idleBehaviour;
 
             _isTarget = false;
 
-            _targetBehaviourType = targetBehaviourType;
+            _targetBehaviour = targetBehaviour;
         }
 
         public void Destroy()
@@ -65,24 +61,7 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour
                 _isTarget = true;
                 _isStayInTarget = true;
                 
-                switch (_targetBehaviourType)
-                {
-                    case EnemyBehaviourTypes.RunOut:
-                        _targetBehaviour = new RunOutBehaviour(transform, playerController.transform);
-                        break;
-                
-                    case EnemyBehaviourTypes.RunIn:
-                        _targetBehaviour = new RunInBehaviour(transform, playerController.transform);
-                        break;
-                
-                    case EnemyBehaviourTypes.Die:
-                        _targetBehaviour = new DieBehaviour(this);
-                        break;
-                
-                    default:
-                        Debug.LogError("Не известный тип активного поведения");
-                        return;
-                }
+                SetTarget(playerController.transform);
             }
         }
 
@@ -92,8 +71,22 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour
             {
                 _isStayInTarget = false;
                 
-                _timerToTarget = 0f;   
+                _timerToTarget = 0f;
+                
+                UnsetTarget();
             }
+        }
+        
+        private void SetTarget(Transform target)
+        {
+            HasTarget = true;
+            Target = target;
+        }
+        
+        private void UnsetTarget()
+        {
+            HasTarget = false;
+            Target = null;
         }
     }
 }

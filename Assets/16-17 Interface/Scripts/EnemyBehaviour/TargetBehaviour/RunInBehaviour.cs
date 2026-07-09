@@ -7,16 +7,16 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour.TargetBehaviour
     public class RunInBehaviour : IBehaviour
     {
         private readonly Transform _self;
-        private readonly Transform _target;
+        private readonly ITargetProvider _targetProvider;
         
         private float _speed = 2f;
         
         private IMovable _movable;
         
-        public RunInBehaviour(Transform self, Transform target)
+        public RunInBehaviour(Transform self, ITargetProvider targetProvider)
         {
             _self = self;
-            _target = target;
+            _targetProvider = targetProvider;
 
             _movable = new MoverLinear(_self);
         }
@@ -28,9 +28,12 @@ namespace _16_17_Interface.Scripts.EnemyBehaviour.TargetBehaviour
 
         private void RunIn()
         {
-            Vector3 direction = _target.position - _self.position;
+            if (_targetProvider.HasTarget)
+            {
+                Vector3 direction = _targetProvider.Target.position - _self.position;
             
-            _movable.Move(direction, _speed * Time.deltaTime);
+                _movable.Move(direction, _speed * Time.deltaTime);
+            }
         }
     }
 }
