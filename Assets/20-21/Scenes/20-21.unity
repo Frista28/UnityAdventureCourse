@@ -490,9 +490,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 274144932}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 317ebc0dc84b6484ea07aa01e57bea10, type: 3}
+  m_Script: {fileID: 11500000, guid: 6cfd742cf6534097867196286d6713b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _explodeRadius: 10
+  _explodeForce: 10
+  _explodeParticles: {fileID: 8790738870552640445, guid: 8f5287990f2af5247991dece1cc300cb,
+    type: 3}
 --- !u!1001 &319445556
 PrefabInstance:
   m_ObjectHideFlags: 0

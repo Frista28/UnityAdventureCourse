@@ -1,48 +1,78 @@
 using _20_21.Scripts.Interface;
 using UnityEngine;
 
-public class DragHandler : MonoBehaviour
+public class DragHandler : IAction, IUpdateble, IBlockable
 {
     private IDraggable _draggable;
+    
     private bool _isDragging;
+    private bool _justTaken = false;
+    
     private float _depth;
     
-    private void Update()
+    public bool IsBlocked() => _isDragging;
+
+    public bool CanExecute() => !_isDragging && Input.GetMouseButtonDown(0);
+
+    public void Execute()
     {
-        if (_isDragging && Input.GetMouseButtonDown(0))
-        {
-            _draggable.EndDrag();
-            
-            _isDragging = false;
-            _draggable = null;
-            
-            return;
-        }
-        
         Ray ray = GetMouseRay();
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             IDraggable draggable = hit.collider.GetComponent<IDraggable>();
 
-            if (draggable != null && _isDragging == false)
+            if (IsStartDragging(draggable))
             {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    _draggable = draggable;
-                    _isDragging = true;
-                    
-                    _draggable.StartDrag(hit.point);
-                    
-                    _depth = Camera.main.WorldToScreenPoint(hit.point).z;
-                }
+                Take(draggable, hit);
             }
         }
+    }
+
+    public void Process()
+    {
+        Drop();
         
-        _depth += Input.mouseScrollDelta.y;
+        Drag();
+    }
+    
+    private Ray GetMouseRay() => Camera.main.ScreenPointToRay(Input.mousePosition);
+
+    private bool IsStartDragging(IDraggable draggable) => draggable != null && _isDragging == false && Input.GetMouseButtonDown(0);
+
+    private void Take(IDraggable draggable, RaycastHit hit)
+    {
+        _draggable = draggable;
+        _isDragging = true;
+                    
+        _draggable.StartDrag(hit.point);
+                    
+        _depth = Camera.main.WorldToScreenPoint(hit.point).z;
         
+        _justTaken = true;
+    }
+
+    private bool IsStopDragging() => _isDragging && Input.GetMouseButtonDown(0);
+
+    private void Drop()
+    {
+        if (IsStopDragging() && _justTaken == false)
+        {
+            _draggable.EndDrag();
+            
+            _isDragging = false;
+            _draggable = null;
+        }
+        
+        _justTaken = false;
+    }
+
+    private void Drag()
+    {
         if (_isDragging && _draggable != null)
         {
+            UpdateDepth();
+            
             Vector3 mouseScreen = Input.mousePosition;
             mouseScreen.z = _depth;
             Vector3 worldPos = Camera.main.ScreenToWorldPoint(mouseScreen);
@@ -51,12 +81,11 @@ public class DragHandler : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    private void UpdateDepth()
     {
-        Ray ray = GetMouseRay();
+        _depth += Input.mouseScrollDelta.y;
         
-        Debug.DrawRay(ray.origin, ray.direction * 100, Color.red);
+        if (_depth < 1)
+            _depth = 1;
     }
-    
-    private Ray GetMouseRay() => Camera.main.ScreenPointToRay(Input.mousePosition);
 }
