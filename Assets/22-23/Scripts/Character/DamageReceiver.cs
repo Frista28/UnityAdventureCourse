@@ -4,19 +4,26 @@ using UnityEngine;
 
 namespace _22_23.Scripts.Character
 {
-    [RequireComponent(typeof(Collider)), RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(Collider)), RequireComponent(typeof(CharacterController))]
     public class DamageReceiver : MonoBehaviour, IDamageable
     {
         private Health _health;
+        private PlayerView _view;
 
-        public void Initialize(Health health)
+        public void Initialize(Health health, PlayerView view)
         {
             _health = health;
+            _view = view;
         }
         
         public void TakeDamage(DamageInfo damageInfo)
         {
             _health.TakeDamage(damageInfo.amount);
+            
+            if(_health.IsDead)
+                _view.Die();
+            else
+                _view.Hit();
         }
 
         private void OnTriggerEnter(Collider other)
