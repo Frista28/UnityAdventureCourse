@@ -86,7 +86,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _healthAmount: 100
   _moveSpeed: 5
-  _playerView: {fileID: 9190373273917482750}
+  _rotateSpeed: 900
+  _view: {fileID: 9190373273917482750}
 --- !u!143 &2147732778691447049
 CharacterController:
   m_ObjectHideFlags: 0

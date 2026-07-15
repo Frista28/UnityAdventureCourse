@@ -10,6 +10,7 @@ namespace _22_23.Scripts.Character
         [SerializeField] private float _healthAmount;
         
         [SerializeField] private float _moveSpeed;
+        [SerializeField] private float _rotateSpeed;
         
         [SerializeField] private PlayerView _view;
         
@@ -18,6 +19,7 @@ namespace _22_23.Scripts.Character
         private CharacterController _controller;
         
         private IMovable _movable;
+        private IRotatable _rotatable;
 
         private void Awake()
         {
@@ -32,6 +34,7 @@ namespace _22_23.Scripts.Character
             _damageReceiver?.Initialize(_health, _view);
             
             _movable = new LinearMotion(_controller, _moveSpeed);
+            _rotatable = new DirectRotator(transform, _rotateSpeed);
         }
 
         private void Update()
@@ -46,8 +49,10 @@ namespace _22_23.Scripts.Character
                     _view.StopWalk();
             
                 _movable.SetDirection(direction);
-            
                 _movable.Move(Time.deltaTime);
+                
+                _rotatable.SetDirection(direction);
+                _rotatable.Rotate(Time.deltaTime);
             }
         }
         
