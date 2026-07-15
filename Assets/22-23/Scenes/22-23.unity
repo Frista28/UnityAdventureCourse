@@ -5762,6 +5762,7 @@ MonoBehaviour:
   _flagPrefab: {fileID: 7806610531952892401, guid: f3ec40f92f210ae43a3c7a01583119aa,
     type: 3}
   _playerController: {fileID: 515835443}
+  _minDistanceToTarget: 0.05
 --- !u!4 &1313966193
 Transform:
   m_ObjectHideFlags: 0

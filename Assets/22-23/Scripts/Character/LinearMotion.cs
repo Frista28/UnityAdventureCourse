@@ -18,7 +18,7 @@ namespace _22_23.Scripts.Character
         
         public Vector3 Direction => _direction;
         
-        public void SetDirection(Vector3 direction) => _direction = direction;
+        public void SetDirection(Vector3 direction) => _direction = direction.normalized;
         
         public void Move(float deltaTime)
         {

@@ -3,6 +3,7 @@ using _22_23.Scripts.Character;
 using _22_23.Scripts.Controller.PointProviders;
 using _22_23.Scripts.Controller.PointValidators;
 using _22_23.Scripts.Interfaces.Click;
+using _22_23.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,8 +11,11 @@ namespace _22_23.Scripts.Controller
 {
     public class ClickFollower : MonoBehaviour
     {
+        private const int MinCornerCount = 2;
         [SerializeField] private GameObject _flagPrefab;
         [SerializeField] private PlayerController _playerController;
+        
+        [SerializeField] private float _minDistanceToTarget = 0.05f;
         
         private ClickProcessor _clickProcessor;
         
@@ -25,13 +29,20 @@ namespace _22_23.Scripts.Controller
         {
             _navMeshPath = new NavMeshPath();
             
-            _queryFilter = new NavMeshQueryFilter();
-            _queryFilter.areaMask = NavMesh.AllAreas;
-            _queryFilter.agentTypeID = 0;
-            
+            _queryFilter = new NavMeshQueryFilter
+            {
+                areaMask = NavMesh.AllAreas,
+                agentTypeID = 0
+            };
+
             IPointProvider pointProvider = new CameraRaycastPointProvider(Camera.main);
             IPointValidator pointValidator = new NavMeshValidator(_queryFilter);
             _clickProcessor = new ClickProcessor(pointProvider, pointValidator);
+        }
+
+        private void Start()
+        {
+            _currentPosition = _playerController.transform.position;
         }
 
         private void Update()
@@ -46,27 +57,33 @@ namespace _22_23.Scripts.Controller
                     _flagPrefabInstance = PlaceFlag(point);
                 }
             }
+            
+            if (NavMeshUtils.TryGetPath(
+                    _playerController.transform.position, 
+                    _currentPosition, 
+                    _queryFilter,
+                    _navMeshPath))
+            {
+                float currentDistanceToTarget = NavMeshUtils.GetPathLength(_navMeshPath);
+                
+                if (EnoughCornersInPath(_navMeshPath) && !IsTargetReached(currentDistanceToTarget))
+                {
+                    Vector3 currentDirection = _navMeshPath.corners[1] - _navMeshPath.corners[0];
+                    
+                    _playerController.SetMoveDirection(currentDirection);
+                    _playerController.SetRotateDirection(currentDirection);
+                    return;
+                }
+            }
+            
+            Destroy(_flagPrefabInstance);
+            _playerController.SetMoveDirection(Vector3.zero);
         }
         
-        private GameObject PlaceFlag(Vector3 position)
-        {
-            return Instantiate(_flagPrefab, position, Quaternion.identity);
-        }
+        private GameObject PlaceFlag(Vector3 position) => Instantiate(_flagPrefab, position, Quaternion.identity);
 
-        private void OnDrawGizmos()
-        {
-            if (_navMeshPath == null)
-                return;
-            
-            NavMesh.CalculatePath(_playerController.transform.position, _currentPosition, _queryFilter, _navMeshPath);
-            
-            Gizmos.color = Color.red;
-            
-            if (_navMeshPath.status == NavMeshPathStatus.PathComplete)
-                foreach (Vector3 corner in _navMeshPath.corners)
-                {
-                    Gizmos.DrawSphere(corner, 0.3f);
-                }
-        }
+        private bool IsTargetReached(float distanceToTarget) => distanceToTarget <= _minDistanceToTarget;
+        
+        private bool EnoughCornersInPath(NavMeshPath pathToTarget) => pathToTarget.corners.Length >= MinCornerCount;
     }
 }

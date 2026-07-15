@@ -16,10 +16,14 @@ namespace _22_23.Scripts.Character
         
         private Health _health;
         private DamageReceiver _damageReceiver;
-        private CharacterController _controller;
+        private CharacterController _characterController;
         
         private IMovable _movable;
         private IRotatable _rotatable;
+        
+        public void SetMoveDirection(Vector3 direction) => _movable.SetDirection(direction);
+        
+        public void SetRotateDirection(Vector3 direction) => _rotatable.SetDirection(direction);
 
         private void Awake()
         {
@@ -28,12 +32,12 @@ namespace _22_23.Scripts.Character
 
         private void Start()
         {
-            _controller = GetComponent<CharacterController>();
+            _characterController = GetComponent<CharacterController>();
             
             _damageReceiver = GetComponent<DamageReceiver>();
             _damageReceiver?.Initialize(_health, _view);
             
-            _movable = new LinearMotion(_controller, _moveSpeed);
+            _movable = new LinearMotion(_characterController, _moveSpeed);
             _rotatable = new DirectRotator(transform, _rotateSpeed);
         }
 
@@ -41,17 +45,15 @@ namespace _22_23.Scripts.Character
         {
             if (_health.IsDead == false)
             {
-                Vector3 direction = GetDirection();
+                Vector3 direction = _movable.Direction;
             
                 if (direction != Vector3.zero)
                     _view.Walk();
                 else
                     _view.StopWalk();
             
-                _movable.SetDirection(direction);
                 _movable.Move(Time.deltaTime);
                 
-                _rotatable.SetDirection(direction);
                 _rotatable.Rotate(Time.deltaTime);
             }
         }
