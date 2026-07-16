@@ -1,91 +1,92 @@
 using _20_21.Scripts.Interface;
 using UnityEngine;
 
-public class DragHandler : IAction, IUpdateble, IBlockable
+namespace _20_21.Scripts
 {
-    private IDraggable _draggable;
-    
-    private bool _isDragging;
-    private bool _justTaken = false;
-    
-    private float _depth;
-    
-    public bool IsBlocked() => _isDragging;
-
-    public bool CanExecute() => !_isDragging && Input.GetMouseButtonDown(0);
-
-    public void Execute()
+    public class DragHandler
     {
-        Ray ray = GetMouseRay();
+        private IDraggable _draggable;
+    
+        private bool _isDragging;
+        private bool _justTaken = false;
+    
+        private float _depth;
+    
+        public bool IsBlocked() => _isDragging;
 
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        public void Execute()
         {
-            IDraggable draggable = hit.collider.GetComponent<IDraggable>();
+            Ray ray = GetMouseRay();
 
-            if (IsStartDragging(draggable))
+            if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                Take(draggable, hit);
+                IDraggable draggable = hit.collider.GetComponent<IDraggable>();
+
+                if (IsStartDragging(draggable))
+                {
+                    Take(draggable, hit);
+                }
             }
         }
-    }
 
-    public void Process()
-    {
-        Drop();
+        public void Process()
+        {
+            Drop();
         
-        Drag();
-    }
+            Drag();
+        }
     
-    private Ray GetMouseRay() => Camera.main.ScreenPointToRay(Input.mousePosition);
+        private Ray GetMouseRay() => Camera.main.ScreenPointToRay(Input.mousePosition);
 
-    private bool IsStartDragging(IDraggable draggable) => draggable != null && _isDragging == false && Input.GetMouseButtonDown(0);
+        private bool IsStartDragging(IDraggable draggable) => draggable != null && _isDragging == false && Input.GetMouseButtonDown(0);
 
-    private void Take(IDraggable draggable, RaycastHit hit)
-    {
-        _draggable = draggable;
-        _isDragging = true;
-                    
-        _draggable.StartDrag(hit.point);
-                    
-        _depth = Camera.main.WorldToScreenPoint(hit.point).z;
-        
-        _justTaken = true;
-    }
-
-    private bool IsStopDragging() => _isDragging && Input.GetMouseButtonDown(0);
-
-    private void Drop()
-    {
-        if (IsStopDragging() && _justTaken == false)
+        private void Take(IDraggable draggable, RaycastHit hit)
         {
-            _draggable.EndDrag();
-            
-            _isDragging = false;
-            _draggable = null;
-        }
+            _draggable = draggable;
+            _isDragging = true;
+                    
+            _draggable.StartDrag(hit.point);
+                    
+            _depth = Camera.main.WorldToScreenPoint(hit.point).z;
         
-        _justTaken = false;
-    }
+            _justTaken = true;
+        }
 
-    private void Drag()
-    {
-        if (_isDragging && _draggable != null)
+        private bool IsStopDragging() => _isDragging && Input.GetMouseButtonDown(0);
+
+        private void Drop()
         {
-            UpdateDepth();
+            if (IsStopDragging() && _justTaken == false)
+            {
+                _draggable.EndDrag();
             
-            Vector3 mouseScreen = Input.mousePosition;
-            mouseScreen.z = _depth;
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(mouseScreen);
+                _isDragging = false;
+                _draggable = null;
+            }
         
-            _draggable.UpdatePosition(worldPos);
+            _justTaken = false;
         }
-    }
 
-    private void UpdateDepth()
-    {
-        _depth += Input.mouseScrollDelta.y;
+        private void Drag()
+        {
+            if (_isDragging && _draggable != null)
+            {
+                UpdateDepth();
+            
+                Vector3 mouseScreen = Input.mousePosition;
+                mouseScreen.z = _depth;
+                Vector3 worldPos = Camera.main.ScreenToWorldPoint(mouseScreen);
         
-        if (_depth < 1)
-            _depth = 1;
+                _draggable.UpdatePosition(worldPos);
+            }
+        }
+
+        private void UpdateDepth()
+        {
+            _depth += Input.mouseScrollDelta.y;
+        
+            if (_depth < 1)
+                _depth = 1;
+        }
     }
 }

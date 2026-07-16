@@ -3,24 +3,19 @@ using UnityEngine;
 
 namespace _20_21.Scripts
 {
-    public class ExplosionCaster : IAction
+    public class ExplosionCaster
     {
-        private Player _player;
-        
         private float _radius;
         private float _force;
         
         private ParticleSystem _explodeParticles;
 
-        public ExplosionCaster(Player player, ParticleSystem particleSystem, float radius = 10f, float force = 10f)
+        public ExplosionCaster(ParticleSystem particleSystem, float radius = 10f, float force = 10f)
         {
-            _player = player;
             _radius = radius;
             _force = force;
             _explodeParticles = particleSystem;
         }
-
-        public bool CanExecute() => _player.IsAnyBlocked() == false && Input.GetMouseButtonDown(1);
 
         public void Execute()
         {

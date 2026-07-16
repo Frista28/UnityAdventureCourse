@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace _20_21.Scripts
 {
-    public class Player : MonoBehaviour
+    public class TestPlayer : MonoBehaviour
     {
         [SerializeField] private float _explodeRadius = 10f;
         [SerializeField] private float _explodeForce = 10f;
