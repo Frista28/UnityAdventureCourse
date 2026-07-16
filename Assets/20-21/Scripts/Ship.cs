@@ -66,7 +66,7 @@ public class Ship : MonoBehaviour
 
     private void Move()
     {
-        float dotProduct = Vector3.Dot(_wind.Direction, _sail.transform.forward);
+        float dotProduct = Vector3.Dot(_wind.Direction, _sail.transform.forward) * Vector3.Dot(_sail.transform.forward, transform.forward);
         
         if (dotProduct <= 0f)
             return;
