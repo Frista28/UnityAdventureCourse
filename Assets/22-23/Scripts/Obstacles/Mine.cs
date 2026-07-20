@@ -1,3 +1,4 @@
+using System.Collections;
 using _22_23.Scripts.Enums;
 using _22_23.Scripts.Interfaces.Damage;
 using _22_23.Scripts.Structs;
@@ -32,17 +33,6 @@ namespace _22_23.Scripts.Obstacles
             collider.radius = _radius;
         }
 
-        private void Update()
-        {
-            if (!_isActive)
-                return;
-            
-            _time += Time.deltaTime;
-            
-            if (_time >= _timeToExplode)
-                Explode();
-        }
-
         private void OnTriggerEnter(Collider other)
         {
             if (other.TryGetComponent(out IDamageable _))
@@ -55,7 +45,7 @@ namespace _22_23.Scripts.Obstacles
                 return;
             
             _isActive = true;
-            _time = 0;
+            StartCoroutine(ExplodeTimer());
         }
         
         private void Explode()
@@ -73,6 +63,12 @@ namespace _22_23.Scripts.Obstacles
             Instantiate(_particlesPrefab, transform.position, Quaternion.Euler(-90, 0, 0));
             
             Destroy(gameObject);
+        }
+        
+        private IEnumerator ExplodeTimer()
+        {
+            yield return new WaitForSeconds(_timeToExplode);
+            Explode();
         }
     }
 }
