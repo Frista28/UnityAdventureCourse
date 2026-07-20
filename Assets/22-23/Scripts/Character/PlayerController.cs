@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace _22_23.Scripts.Character
 {
-    [RequireComponent(typeof(Collider)), RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour, IDamageable
     {
         [SerializeField] private float _healthAmount;
