@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8790738870552640445}
   - component: {fileID: 6422679578043259487}
   m_Layer: 0
-  m_Name: DieParticle
+  m_Name: ExplodeParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
