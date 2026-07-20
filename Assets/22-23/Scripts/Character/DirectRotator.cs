@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _22_23.Scripts.Character
 {
-    public class DirectRotator : IRotatable
+    public class DirectRotator
     {
         private Vector3 _direction;
         private float _speedRotation;

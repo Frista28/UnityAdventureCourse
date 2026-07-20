@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _22_23.Scripts.Character
 {
-    public class LinearMotion : IMovable
+    public class LinearMotion
     {
         private Vector3 _direction;
         private readonly CharacterController _controller;

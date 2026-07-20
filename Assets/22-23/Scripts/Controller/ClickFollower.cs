@@ -3,6 +3,7 @@ using _22_23.Scripts.Character;
 using _22_23.Scripts.Controller.PointProviders;
 using _22_23.Scripts.Controller.PointValidators;
 using _22_23.Scripts.Interfaces.Click;
+using _22_23.Scripts.Interfaces.Movement;
 using _22_23.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.AI;
@@ -20,10 +21,14 @@ namespace _22_23.Scripts.Controller
         private ClickProcessor _clickProcessor;
         
         private Vector3 _currentPosition;
-        private GameObject _flagPrefabInstance;
+        private bool _isReached;
         
         private NavMeshPath _navMeshPath;
         private NavMeshQueryFilter _queryFilter;
+        
+        public Vector3 TargetPosition => _currentPosition;
+        
+        public bool IsReachedTargetPosition => _isReached;
 
         private void Awake()
         {
@@ -42,7 +47,8 @@ namespace _22_23.Scripts.Controller
 
         private void Start()
         {
-            _currentPosition = _playerController.transform.position;
+            _currentPosition = _playerController.Position;
+            _isReached = true;
         }
 
         private void Update()
@@ -51,15 +57,12 @@ namespace _22_23.Scripts.Controller
             {
                 if (_clickProcessor.TryProcessClick(out Vector3 point))
                 {
-                    Destroy(_flagPrefabInstance);
-                    
-                    _currentPosition = point;
-                    _flagPrefabInstance = PlaceFlag(point);
+                    SetNewTargetPosition(point);
                 }
             }
             
             if (NavMeshUtils.TryGetPath(
-                    _playerController.transform.position, 
+                    _playerController.Position, 
                     _currentPosition, 
                     _queryFilter,
                     _navMeshPath))
@@ -70,20 +73,23 @@ namespace _22_23.Scripts.Controller
                 {
                     Vector3 currentDirection = _navMeshPath.corners[1] - _navMeshPath.corners[0];
                     
-                    _playerController.SetMoveDirection(currentDirection);
-                    _playerController.SetRotateDirection(currentDirection);
+                    _playerController.SetDirection(currentDirection);
                     return;
                 }
             }
             
-            Destroy(_flagPrefabInstance);
-            _playerController.SetMoveDirection(Vector3.zero);
+            _isReached = true;
+            _playerController.SetDirection(Vector3.zero);
         }
-        
-        private GameObject PlaceFlag(Vector3 position) => Instantiate(_flagPrefab, position, Quaternion.identity);
 
         private bool IsTargetReached(float distanceToTarget) => distanceToTarget <= _minDistanceToTarget;
         
         private bool EnoughCornersInPath(NavMeshPath pathToTarget) => pathToTarget.corners.Length >= MinCornerCount;
+        
+        private void SetNewTargetPosition(Vector3 position)
+        {
+            _currentPosition = position;
+            _isReached = false;
+        }
     }
 }

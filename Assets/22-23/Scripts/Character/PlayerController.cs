@@ -19,14 +19,18 @@ namespace _22_23.Scripts.Character
         private Health _health;
         private CharacterController _characterController;
         
-        private IMovable _movable;
-        private IRotatable _rotatable;
+        private LinearMotion _movable;
+        private DirectRotator _rotatable;
+
+        public void SetDirection(Vector3 direction)
+        {
+            _movable.SetDirection(direction);
+            _rotatable.SetDirection(direction);
+        }
         
-        public void SetMoveDirection(Vector3 direction) => _movable.SetDirection(direction);
+        public Vector3 Position => transform.position;
         
-        public void SetRotateDirection(Vector3 direction) => _rotatable.SetDirection(direction);
-        
-        public Vector3 MoveDirection => _movable.Direction;
+        public Vector3 Direction => _movable.Direction;
         
         public void TakeDamage(DamageInfo damageInfo)
         {

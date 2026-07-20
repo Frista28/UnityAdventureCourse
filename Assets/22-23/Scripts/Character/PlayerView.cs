@@ -42,7 +42,7 @@ namespace _22_23.Scripts.Character
 
         private void Update()
         {
-            Vector3 playerMoveDirection = _player.MoveDirection;
+            Vector3 playerMoveDirection = _player.Direction;
             
             if (playerMoveDirection != Vector3.zero)
                 Walk();
