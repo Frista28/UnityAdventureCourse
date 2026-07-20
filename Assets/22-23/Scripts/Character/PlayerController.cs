@@ -1,11 +1,13 @@
 ﻿using System;
+using _22_23.Scripts.Interfaces.Damage;
 using _22_23.Scripts.Interfaces.Movement;
+using _22_23.Scripts.Structs;
 using UnityEngine;
 
 namespace _22_23.Scripts.Character
 {
-    [RequireComponent(typeof(CharacterController))]
-    public class PlayerController : MonoBehaviour
+    [RequireComponent(typeof(Collider)), RequireComponent(typeof(CharacterController))]
+    public class PlayerController : MonoBehaviour, IDamageable
     {
         [SerializeField] private float _healthAmount;
         
@@ -15,7 +17,6 @@ namespace _22_23.Scripts.Character
         [SerializeField] private PlayerView _view;
         
         private Health _health;
-        private DamageReceiver _damageReceiver;
         private CharacterController _characterController;
         
         private IMovable _movable;
@@ -26,6 +27,16 @@ namespace _22_23.Scripts.Character
         public void SetRotateDirection(Vector3 direction) => _rotatable.SetDirection(direction);
         
         public Vector3 MoveDirection => _movable.Direction;
+        
+        public void TakeDamage(DamageInfo damageInfo)
+        {
+            _health.TakeDamage(damageInfo.amount);
+            
+            if(_health.IsDead)
+                _view.Die();
+            else
+                _view.Hit();
+        }
 
         private void Awake()
         {
@@ -35,9 +46,6 @@ namespace _22_23.Scripts.Character
         private void Start()
         {
             _characterController = GetComponent<CharacterController>();
-            
-            _damageReceiver = GetComponent<DamageReceiver>();
-            _damageReceiver?.Initialize(_health, _view);
             
             _movable = new LinearMotion(_characterController, _moveSpeed);
             _rotatable = new DirectRotator(transform, _rotateSpeed);
@@ -52,7 +60,5 @@ namespace _22_23.Scripts.Character
                 _rotatable.Rotate(Time.deltaTime);
             }
         }
-        
-        private Vector3 GetDirection() => new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical")).normalized;
     }
 }
