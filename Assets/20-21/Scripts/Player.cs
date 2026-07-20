@@ -8,6 +8,9 @@ namespace _20_21.Scripts
         [SerializeField] private float _explodeForce = 10f;
         
         [SerializeField] private ParticleSystem _explodeParticles;
+        
+        private bool leftMouseButtonDown;
+        private bool rightMouseButtonDown;
 
         private DragHandler _dragHandler;
         private ExplosionCaster _explosionCaster;
@@ -20,13 +23,21 @@ namespace _20_21.Scripts
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
-                _dragHandler.Execute();
+            leftMouseButtonDown = Input.GetMouseButtonDown(0);
+            rightMouseButtonDown = Input.GetMouseButtonDown(1);
             
-            if (Input.GetMouseButtonDown(1) && _dragHandler.IsBlocked() == false)
-                _explosionCaster.Execute();
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (leftMouseButtonDown)
+            {
+                _dragHandler.Execute(ray);
+                _dragHandler.Drop();
+            }
             
-            _dragHandler.Process();
+            if (rightMouseButtonDown && _dragHandler.IsBlocked == false)
+                _explosionCaster.Execute(ray);
+                
+            _dragHandler.Drag(Input.mousePosition, Input.mouseScrollDelta.y);
         }
     }
 }

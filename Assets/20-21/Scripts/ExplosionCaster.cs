@@ -17,10 +17,8 @@ namespace _20_21.Scripts
             _explodeParticles = particleSystem;
         }
 
-        public void Execute()
+        public void Execute(Ray ray)
         {
-            Ray ray = GetMouseRay();
-                
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 Vector3 explosionPoint = hit.point;
@@ -43,7 +41,5 @@ namespace _20_21.Scripts
                 
             }
         }
-        
-        private Ray GetMouseRay() => Camera.main.ScreenPointToRay(Input.mousePosition);
     }
 }

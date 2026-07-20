@@ -12,12 +12,10 @@ namespace _20_21.Scripts
     
         private float _depth;
     
-        public bool IsBlocked() => _isDragging;
+        public bool IsBlocked => _isDragging;
 
-        public void Execute()
+        public void Execute(Ray ray)
         {
-            Ray ray = GetMouseRay();
-
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 IDraggable draggable = hit.collider.GetComponent<IDraggable>();
@@ -29,16 +27,7 @@ namespace _20_21.Scripts
             }
         }
 
-        public void Process()
-        {
-            Drop();
-        
-            Drag();
-        }
-    
-        private Ray GetMouseRay() => Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        private bool IsStartDragging(IDraggable draggable) => draggable != null && _isDragging == false && Input.GetMouseButtonDown(0);
+        private bool IsStartDragging(IDraggable draggable) => draggable != null && _isDragging == false;
 
         private void Take(IDraggable draggable, RaycastHit hit)
         {
@@ -52,11 +41,9 @@ namespace _20_21.Scripts
             _justTaken = true;
         }
 
-        private bool IsStopDragging() => _isDragging && Input.GetMouseButtonDown(0);
-
-        private void Drop()
+        public void Drop()
         {
-            if (IsStopDragging() && _justTaken == false)
+            if (_justTaken == false && _isDragging)
             {
                 _draggable.EndDrag();
             
@@ -67,26 +54,19 @@ namespace _20_21.Scripts
             _justTaken = false;
         }
 
-        private void Drag()
+        public void Drag(Vector3 position, float depth)
         {
-            if (_isDragging && _draggable != null)
-            {
-                UpdateDepth();
+            if (_isDragging == false)
+                return;
             
-                Vector3 mouseScreen = Input.mousePosition;
-                mouseScreen.z = _depth;
-                Vector3 worldPos = Camera.main.ScreenToWorldPoint(mouseScreen);
+            UpdateDepth(depth);
+            
+            position.z = _depth;
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(position);
         
-                _draggable.UpdatePosition(worldPos);
-            }
+            _draggable.UpdatePosition(worldPos);
         }
 
-        private void UpdateDepth()
-        {
-            _depth += Input.mouseScrollDelta.y;
-        
-            if (_depth < 1)
-                _depth = 1;
-        }
+        private void UpdateDepth(float delta) => _depth = Mathf.Max(1, _depth + delta);
     }
 }
