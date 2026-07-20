@@ -9,6 +9,8 @@ namespace _22_23.Scripts.Character
         private readonly int _walkKey = Animator.StringToHash("Walk");
         private readonly int _dieKey = Animator.StringToHash("Die");
         
+        [SerializeField] private PlayerController _player;
+        
         private bool _canTakeDamage;
         
         private Animator _animator;
@@ -22,10 +24,6 @@ namespace _22_23.Scripts.Character
                 _canTakeDamage = false;
             }
         }
-        
-        public void Walk() => _animator.SetBool(_walkKey, true);
-        
-        public void StopWalk() => _animator.SetBool(_walkKey, false);
         
         public void Die() => _animator.SetTrigger(_dieKey);
         
@@ -41,5 +39,19 @@ namespace _22_23.Scripts.Character
             
             _canTakeDamage = true;
         }
+
+        private void Update()
+        {
+            Vector3 playerMoveDirection = _player.MoveDirection;
+            
+            if (playerMoveDirection != Vector3.zero)
+                Walk();
+            else
+                StopWalk();
+        }
+
+        private void Walk() => _animator.SetBool(_walkKey, true);
+        
+        private void StopWalk() => _animator.SetBool(_walkKey, false);
     }
 }

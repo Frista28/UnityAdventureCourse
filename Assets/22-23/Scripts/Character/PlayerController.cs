@@ -24,6 +24,8 @@ namespace _22_23.Scripts.Character
         public void SetMoveDirection(Vector3 direction) => _movable.SetDirection(direction);
         
         public void SetRotateDirection(Vector3 direction) => _rotatable.SetDirection(direction);
+        
+        public Vector3 MoveDirection => _movable.Direction;
 
         private void Awake()
         {
@@ -45,13 +47,6 @@ namespace _22_23.Scripts.Character
         {
             if (_health.IsDead == false)
             {
-                Vector3 direction = _movable.Direction;
-            
-                if (direction != Vector3.zero)
-                    _view.Walk();
-                else
-                    _view.StopWalk();
-            
                 _movable.Move(Time.deltaTime);
                 
                 _rotatable.Rotate(Time.deltaTime);
