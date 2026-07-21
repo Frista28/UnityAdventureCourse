@@ -1,4 +1,5 @@
 ﻿using System;
+using _22_23.Scripts.Character.Interfaces;
 using _22_23.Scripts.Interfaces.Damage;
 using _22_23.Scripts.Interfaces.Movement;
 using _22_23.Scripts.Structs;
@@ -7,7 +8,7 @@ using UnityEngine;
 namespace _22_23.Scripts.Character
 {
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerController : MonoBehaviour, IDamageable
+    public class PlayerController : MonoBehaviour, IDamageable, IPositionProvider, IHealable
     {
         [SerializeField] private float _healthAmount;
         
@@ -40,6 +41,11 @@ namespace _22_23.Scripts.Character
                 _view.Die();
             else
                 _view.Hit();
+        }
+
+        public void Heal(float amount)
+        {
+            _health.Heal(amount);
         }
 
         private void Awake()
