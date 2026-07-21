@@ -15,7 +15,7 @@ namespace _22_23.Scripts.Obstacles
         
         [SerializeField] private DamageType damageType;
         
-        [SerializeField] private ParticleSystem _particlesPrefab;
+        [SerializeField] private MineView _view;
         
         private DamageInfo _damageInfo;
         
@@ -60,7 +60,7 @@ namespace _22_23.Scripts.Obstacles
                 }
             }
             
-            Instantiate(_particlesPrefab, transform.position, Quaternion.Euler(-90, 0, 0));
+            _view.Explode();
             
             Destroy(gameObject);
         }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2568112609757803483}
   - component: {fileID: 744923589826758884}
   - component: {fileID: 6437593414295536512}
+  - component: {fileID: 5770908299752498417}
   m_Layer: 0
   m_Name: ForestCatapultWheel
   m_TagString: Untagged
@@ -83,6 +84,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5770908299752498417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3280903576941979455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e57470cd81574ef4386e2a281768b25b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _explosionEffectPrefab: {fileID: 144992322036108688, guid: 967bbff1d738069438c3a75333aa3c5a,
+    type: 3}
 --- !u!1 &9021957568562565588
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,5 +169,4 @@ MonoBehaviour:
   _radius: 1
   _timeToExplode: 1
   damageType: 0
-  _particlesPrefab: {fileID: 8790738870552640445, guid: 9114eb984abdadc4b8b06250968a28d3,
-    type: 3}
+  _view: {fileID: 5770908299752498417}
