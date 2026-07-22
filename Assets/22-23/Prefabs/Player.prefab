@@ -124,6 +124,40 @@ MonoBehaviour:
   _healthAmount: 100
   _moveSpeed: 5
   _rotateSpeed: 900
+  _jumpSpeed: 5
+  _jumpCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.2
+      value: 0
+      inSlope: 0.020583194
+      outSlope: 0.020583194
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.7638889
+    - serializedVersion: 3
+      time: 0.5
+      value: 2
+      inSlope: -0.0127308145
+      outSlope: -0.0127308145
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.8310032
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.5260561
+      outSlope: -0.5260561
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.6747025
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _view: {fileID: 9190373273917482750}
 --- !u!1 &2061426537616689850
 GameObject:

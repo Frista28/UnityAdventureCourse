@@ -7,13 +7,16 @@ using UnityEngine.AI;
 
 namespace _22_23.Scripts.Character
 {
-    [RequireComponent(typeof(NavMeshAgent))]
+    [RequireComponent(typeof(NavMeshAgent), typeof(Rigidbody), typeof(Collider))]
     public class PlayerAgentCharacter : MonoBehaviour, IDamageable, IPositionProvider, IHealable
     {
         [SerializeField] private float _healthAmount;
         
-        [SerializeField] private float _moveSpeed;
-        [SerializeField] private float _rotateSpeed;
+        [SerializeField] private float _moveSpeed = 5f;  
+        [SerializeField] private float _rotateSpeed = 900f;
+        [SerializeField] private float _jumpSpeed = 1f;
+        
+        [SerializeField] private AnimationCurve _jumpCurve;
         
         [SerializeField] private PlayerView _view;
         
@@ -22,10 +25,13 @@ namespace _22_23.Scripts.Character
         
         private AgentDirectionMover _mover;
         private DirectRotator _rotator;
+        private AgentSinJumper _jumper;
         
         public Vector3 Position => transform.position;
         
         public Vector3 Direction => _mover.Direction;
+        
+        public bool IsJumping => _jumper.IsJumping();
         
         public void TakeDamage(DamageInfo damageInfo)
         {
@@ -57,6 +63,20 @@ namespace _22_23.Scripts.Character
 
         public bool IsPathComplete() => !_agent.hasPath;
         
+        public bool IsOnNavMeshLink(out OffMeshLinkData offMeshLinkData)
+        {
+            if (_agent.isOnOffMeshLink)
+            {
+                offMeshLinkData = _agent.currentOffMeshLinkData;
+                return true;
+            }
+
+            offMeshLinkData = default(OffMeshLinkData);
+            return false;
+        }
+        
+        public void Jump(OffMeshLinkData offMeshLinkData) => _jumper.Jump(offMeshLinkData);
+        
         private void Awake()
         {
             _health = new Health(_healthAmount);
@@ -67,11 +87,26 @@ namespace _22_23.Scripts.Character
 
             _rotator = new DirectRotator(transform, _rotateSpeed);
             _mover = new AgentDirectionMover(_agent, _moveSpeed);
+            _jumper = new AgentSinJumper(_agent, _jumpSpeed, this, _jumpCurve);
         }
 
         private void Update()
         {
-            _rotator.SetDirection(Direction);
+            if(IsOnNavMeshLink(out OffMeshLinkData offMeshLinkData))
+            {
+                if(IsJumping == false)
+                {
+                    SetRotateDirection(offMeshLinkData.endPos - offMeshLinkData.startPos);
+                    
+                    Jump(offMeshLinkData);
+                    
+                    return;
+                }
+            }
+            
+            if (IsJumping == false)
+                _rotator.SetDirection(Direction);
+            
             _rotator.Rotate(Time.deltaTime);
         }
     }
