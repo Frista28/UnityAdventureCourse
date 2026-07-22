@@ -17,8 +17,13 @@ namespace _22_23.Scripts
 
         private void Update()
         {
-            if(Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+                    return;
+                
                 _moveCommandHandler.Execute();
+            }
             
             if (Input.GetKeyDown(KeyCode.F))
                 _spawnerToggleController.Toggle();
