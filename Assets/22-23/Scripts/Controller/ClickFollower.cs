@@ -12,6 +12,7 @@ namespace _22_23.Scripts.Controller
     public class ClickFollower : MonoBehaviour
     {
         private const int MinCornerCount = 2;
+        
         [SerializeField] private GameObject _flagPrefab;
         [SerializeField] private PlayerController _playerController;
         
@@ -93,5 +94,15 @@ namespace _22_23.Scripts.Controller
             _currentPosition = position;
             _isReached = false;
         }
+
+        /*private void OnDrawGizmos()
+        {
+                Gizmos.color = Color.red;
+                
+                foreach (var corner in _navMeshPath.corners)
+                {
+                    Gizmos.DrawSphere(corner, 0.2f);
+                }
+        }*/
     }
 }

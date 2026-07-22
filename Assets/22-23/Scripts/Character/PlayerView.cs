@@ -9,7 +9,7 @@ namespace _22_23.Scripts.Character
         private readonly int _walkKey = Animator.StringToHash("Walk");
         private readonly int _dieKey = Animator.StringToHash("Die");
         
-        [SerializeField] private PlayerController _player;
+        [SerializeField] private PlayerAgentCharacter _character;
         
         private bool _canTakeDamage;
         
@@ -42,7 +42,7 @@ namespace _22_23.Scripts.Character
 
         private void Update()
         {
-            Vector3 playerMoveDirection = _player.Direction;
+            Vector3 playerMoveDirection = _character.Direction;
             
             if (playerMoveDirection != Vector3.zero)
                 Walk();

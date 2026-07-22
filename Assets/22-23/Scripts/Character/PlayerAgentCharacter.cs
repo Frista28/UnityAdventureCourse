@@ -1,15 +1,14 @@
-﻿using System;
-using _22_23.Scripts.Character.Interfaces;
+﻿using _22_23.Scripts.Character.Interfaces;
 using _22_23.Scripts.Interfaces.Damage;
-using _22_23.Scripts.Interfaces.Movement;
+using _22_23.Scripts.Movable;
 using _22_23.Scripts.Structs;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace _22_23.Scripts.Character
 {
-    [RequireComponent(typeof(CharacterController), typeof(NavMeshAgent))]
-    public class PlayerController : MonoBehaviour, IDamageable, IPositionProvider, IHealable
+    [RequireComponent(typeof(NavMeshAgent))]
+    public class PlayerAgentCharacter : MonoBehaviour, IDamageable, IPositionProvider, IHealable
     {
         [SerializeField] private float _healthAmount;
         
@@ -19,21 +18,14 @@ namespace _22_23.Scripts.Character
         [SerializeField] private PlayerView _view;
         
         private Health _health;
-        private CharacterController _characterController;
         private NavMeshAgent _agent;
         
-        private LinearMotion _movable;
-        private DirectRotator _rotatable;
-
-        public void SetDirection(Vector3 direction)
-        {
-            _movable.SetDirection(direction);
-            _rotatable.SetDirection(direction);
-        }
+        private AgentDirectionMover _mover;
+        private DirectRotator _rotator;
         
         public Vector3 Position => transform.position;
         
-        public Vector3 Direction => _movable.Direction;
+        public Vector3 Direction => _mover.Direction;
         
         public void TakeDamage(DamageInfo damageInfo)
         {
@@ -49,28 +41,38 @@ namespace _22_23.Scripts.Character
         {
             _health.Heal(amount);
         }
+        
+        public void SetDestination(Vector3 destination) => _mover.MoveTo(destination);
+        
+        public void SetRotateDirection(Vector3 direction) => _rotator.SetDirection(direction);
 
+        public NavMeshQueryFilter GetNavMeshQueryFilter()
+        {
+            return new NavMeshQueryFilter
+            {
+                areaMask = _agent.areaMask,
+                agentTypeID = _agent.agentTypeID
+            };
+        }
+
+        public bool IsPathComplete() => !_agent.hasPath;
+        
         private void Awake()
         {
             _health = new Health(_healthAmount);
             
-            _characterController = GetComponent<CharacterController>();
-            _movable = new LinearMotion(_characterController, _moveSpeed);
-            _rotatable = new DirectRotator(transform, _rotateSpeed);
-            
             _agent = GetComponent<NavMeshAgent>();
             _agent.updateRotation = false;
-            _agent.updatePosition = false;
+            _agent.speed = _moveSpeed;
+
+            _rotator = new DirectRotator(transform, _rotateSpeed);
+            _mover = new AgentDirectionMover(_agent, _moveSpeed);
         }
 
         private void Update()
         {
-            if (_health.IsDead == false)
-            {
-                _movable.Move(Time.deltaTime);
-                
-                _rotatable.Rotate(Time.deltaTime);
-            }
+            _rotator.SetDirection(Direction);
+            _rotator.Rotate(Time.deltaTime);
         }
     }
 }

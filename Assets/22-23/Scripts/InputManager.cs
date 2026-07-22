@@ -9,7 +9,7 @@ namespace _22_23.Scripts
         private const KeyCode _toggleSpawnKey = KeyCode.F;
         
         [SerializeField] private GameObject _healthPackPrefab;
-        [SerializeField] private PlayerController _playerController;
+        [SerializeField] private PlayerAgentCharacter _character;
         
         [SerializeField] private float _timeToHealthPackSpawn;
 
@@ -20,7 +20,7 @@ namespace _22_23.Scripts
             HealthPackSpawner healthPackSpawner =
                 new HealthPackSpawner(_healthPackPrefab, 
                     _timeToHealthPackSpawn, 
-                    _playerController, 
+                    _character, 
                     this);
             
             _controller =  new SpawnerToggleController(healthPackSpawner);
