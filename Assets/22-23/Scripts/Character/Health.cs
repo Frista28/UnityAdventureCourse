@@ -21,7 +21,22 @@ namespace _22_23.Scripts.Character
             
             if (CurrentHealth <= 0)
                 CurrentHealth = 0;
+
+            DebugHP();
+        }
+
+        public void Heal(float healAmount)
+        {
+            CurrentHealth += healAmount;
             
+            if (CurrentHealth > MaxHealth)
+                CurrentHealth = MaxHealth;
+
+            DebugHP();
+        }
+
+        private void DebugHP()
+        {
             Debug.Log(CurrentHealth);
         }
     }

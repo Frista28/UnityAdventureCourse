@@ -1,13 +1,15 @@
 ﻿using System;
+using _22_23.Scripts.Character.Interfaces;
 using _22_23.Scripts.Interfaces.Damage;
 using _22_23.Scripts.Interfaces.Movement;
 using _22_23.Scripts.Structs;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace _22_23.Scripts.Character
 {
-    [RequireComponent(typeof(CharacterController))]
-    public class PlayerController : MonoBehaviour, IDamageable
+    [RequireComponent(typeof(CharacterController), typeof(NavMeshAgent))]
+    public class PlayerController : MonoBehaviour, IDamageable, IPositionProvider, IHealable
     {
         [SerializeField] private float _healthAmount;
         
@@ -18,6 +20,7 @@ namespace _22_23.Scripts.Character
         
         private Health _health;
         private CharacterController _characterController;
+        private NavMeshAgent _agent;
         
         private LinearMotion _movable;
         private DirectRotator _rotatable;
@@ -42,17 +45,22 @@ namespace _22_23.Scripts.Character
                 _view.Hit();
         }
 
+        public void Heal(float amount)
+        {
+            _health.Heal(amount);
+        }
+
         private void Awake()
         {
             _health = new Health(_healthAmount);
-        }
-
-        private void Start()
-        {
-            _characterController = GetComponent<CharacterController>();
             
+            _characterController = GetComponent<CharacterController>();
             _movable = new LinearMotion(_characterController, _moveSpeed);
             _rotatable = new DirectRotator(transform, _rotateSpeed);
+            
+            _agent = GetComponent<NavMeshAgent>();
+            _agent.updateRotation = false;
+            _agent.updatePosition = false;
         }
 
         private void Update()

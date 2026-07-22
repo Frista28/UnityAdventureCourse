@@ -1,18 +1,18 @@
-﻿using System;
-using _22_23.Scripts.Character;
+﻿using _22_23.Scripts.Character;
 using _22_23.Scripts.Controller.PointProviders;
 using _22_23.Scripts.Controller.PointValidators;
 using _22_23.Scripts.Interfaces.Click;
-using _22_23.Scripts.Interfaces.Movement;
 using _22_23.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 namespace _22_23.Scripts.Controller
 {
     public class ClickFollower : MonoBehaviour
     {
         private const int MinCornerCount = 2;
+        
         [SerializeField] private GameObject _flagPrefab;
         [SerializeField] private PlayerController _playerController;
         
@@ -55,6 +55,9 @@ namespace _22_23.Scripts.Controller
         {
             if (Input.GetMouseButtonDown(0))
             {
+                if (EventSystem.current.IsPointerOverGameObject())
+                    return;
+                
                 if (_clickProcessor.TryProcessClick(out Vector3 point))
                 {
                     SetNewTargetPosition(point);
@@ -91,5 +94,15 @@ namespace _22_23.Scripts.Controller
             _currentPosition = position;
             _isReached = false;
         }
+
+        /*private void OnDrawGizmos()
+        {
+                Gizmos.color = Color.red;
+                
+                foreach (var corner in _navMeshPath.corners)
+                {
+                    Gizmos.DrawSphere(corner, 0.2f);
+                }
+        }*/
     }
 }
