@@ -11,7 +11,7 @@
         {
             _audioService = audioService;
             
-            _soundEnabled = false;
+            _soundEnabled = true;
             _effectsEnabled = true;
             
             ApplySettings();

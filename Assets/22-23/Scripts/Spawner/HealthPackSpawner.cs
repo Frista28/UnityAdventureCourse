@@ -1,5 +1,6 @@
 using System.Collections;
 using _22_23.Scripts.Character;
+using _22_23.Scripts.Items.Health;
 using _22_23.Scripts.Spawner.Interfaces;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace _22_23.Scripts.Spawner
     {
         private readonly IPositionProvider _playerPosition;
     
-        private readonly GameObject _healthPackPrefab;
+        private readonly HealthPack _healthPackPrefab;
     
         private readonly float _timeToSpawn;
 
@@ -18,7 +19,7 @@ namespace _22_23.Scripts.Spawner
         private Coroutine _healthPackCoroutine;
 
 
-        public HealthPackSpawner(GameObject healthPackPrefab, float timeToSpawn, IPositionProvider playerPosition, MonoBehaviour corutinRunner)
+        public HealthPackSpawner(HealthPack healthPackPrefab, float timeToSpawn, IPositionProvider playerPosition, MonoBehaviour corutinRunner)
         {
             _healthPackPrefab = healthPackPrefab;
             _timeToSpawn = timeToSpawn;

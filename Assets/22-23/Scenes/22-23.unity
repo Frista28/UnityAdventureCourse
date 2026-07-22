@@ -1950,54 +1950,6 @@ Transform:
   - {fileID: 1374437935}
   m_Father: {fileID: 2132243421}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &421308941
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 421308943}
-  - component: {fileID: 421308942}
-  m_Layer: 0
-  m_Name: InputManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &421308942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 421308941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31148f9e49bd427dac25414376f674f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _healthPackPrefab: {fileID: 4556226493152073382, guid: 817ed1f693ea5cb4e9fb138d4ecf33db,
-    type: 3}
-  _character: {fileID: 515835447}
-  _timeToHealthPackSpawn: 5
---- !u!4 &421308943
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 421308941}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40.99117, y: -55.80455, z: 25.70578}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &442091094
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2821,6 +2773,9 @@ MonoBehaviour:
   _inputHandler: {fileID: 1102042208}
   _flagPlacer: {fileID: 638614107}
   _playerAgentCharacter: {fileID: 515835447}
+  _timeToHealthPackSpawn: 5
+  _healthPackPrefab: {fileID: 8757648817754722488, guid: 817ed1f693ea5cb4e9fb138d4ecf33db,
+    type: 3}
 --- !u!4 &510705122
 Transform:
   m_ObjectHideFlags: 0
@@ -6924,70 +6879,6 @@ MonoBehaviour:
   m_IgnoreFromBuild: 0
   m_ApplyToChildren: 1
   m_AffectedAgents: ffffffff
---- !u!1 &1313966191
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1313966193}
-  - component: {fileID: 1313966192}
-  - component: {fileID: 1313966194}
-  m_Layer: 0
-  m_Name: ClickHandler
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1313966192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1313966191}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c53dca3abbe3475089f434a89eb831f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _flagPrefab: {fileID: 7806610531952892401, guid: f3ec40f92f210ae43a3c7a01583119aa,
-    type: 3}
-  _playerController: {fileID: 0}
-  _minDistanceToTarget: 0.05
---- !u!4 &1313966193
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1313966191}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1313966194
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1313966191}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3b404eeb8474132a94e64237852c5cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _flagPrefab: {fileID: 3703663267919687404, guid: f3ec40f92f210ae43a3c7a01583119aa,
-    type: 3}
-  _controller: {fileID: 1313966192}
 --- !u!1001 &1322355260
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11542,8 +11433,6 @@ SceneRoots:
   - {fileID: 2132243421}
   - {fileID: 1524752381}
   - {fileID: 7960848685201537721}
-  - {fileID: 1313966193}
-  - {fileID: 421308943}
   - {fileID: 54115155}
   - {fileID: 1104807819}
   - {fileID: 1173412117}
