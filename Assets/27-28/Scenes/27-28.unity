@@ -174,9 +174,9 @@ MonoBehaviour:
   _currencyViewPrefab: {fileID: 2651782222885872138, guid: dcda678aa584f03489ec2f5d1c50ef16,
     type: 3}
   _walletHandler: {fileID: 1149082851}
-  _coinImage: {fileID: 21300000, guid: a740419d2dcbb3f4eab00f1f9fbb589e, type: 3}
-  _diamondImage: {fileID: 0}
-  _energyImage: {fileID: 0}
+  _coinImage: {fileID: 21300000, guid: 25378d4cca84f8543907a42df0507147, type: 3}
+  _diamondImage: {fileID: 21300000, guid: 714bc1e5a2a328d4c846976455c9cf2a, type: 3}
+  _energyImage: {fileID: 21300000, guid: 66fe456b604da7547b6920b7c7b9a696, type: 3}
 --- !u!114 &22643285
 MonoBehaviour:
   m_ObjectHideFlags: 0
