@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace _27_28.Scripts.Wallet
 {
     public class Wallet
     {
         private readonly Dictionary<CurrencyType, Currency> _currencies;
+
+        public List<IReadOnlyCurrency> Currencies => GetAvailableCurrencies();
 
         public Wallet()
         {
@@ -31,6 +34,18 @@ namespace _27_28.Scripts.Wallet
             }
 
             return currency;
+        }
+
+        private List<IReadOnlyCurrency> GetAvailableCurrencies()
+        {
+            List<IReadOnlyCurrency> currencies = new List<IReadOnlyCurrency>();
+
+            foreach (var pair in _currencies)
+            {
+                currencies.Add(pair.Value);
+            }
+
+            return currencies;
         }
     }
 }

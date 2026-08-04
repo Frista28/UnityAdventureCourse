@@ -6,6 +6,8 @@ namespace _27_28.Scripts.Wallet
     {
         public event Action<int> AmountChanged;
         
+        CurrencyType Type { get; }
+        
         public int Amount { get; }
     }
 }
