@@ -5,7 +5,6 @@ namespace _27_28.Scripts.Wallet.UI
     public class WalletUI : MonoBehaviour
     {
         [SerializeField] private CurrencyView _currencyViewPrefab;
-        [SerializeField] private WalletHandler _walletHandler;
         
         [SerializeField] private Sprite _coinImage;
         [SerializeField] private Sprite _diamondImage;
@@ -13,10 +12,10 @@ namespace _27_28.Scripts.Wallet.UI
         
         private Wallet _wallet;
 
-        public void Start()
+        public void Init(Wallet wallet)
         {
-            _wallet = _walletHandler.Wallet;
-
+            _wallet = wallet;
+            
             foreach (var currency in _wallet.Currencies)
             {
                 CreateCurrencyView(currency);
