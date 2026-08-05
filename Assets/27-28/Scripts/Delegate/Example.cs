@@ -20,19 +20,19 @@ namespace _27_28.Scripts.Delegate
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 Enemy newEnemy = Instantiate(_enemyPrefab, Vector3.zero, Quaternion.identity);
-                _killer.Kill(newEnemy, () => newEnemy.IsDead);
+                _killer.KillWhen(newEnemy, () => newEnemy.IsDead);
             }
             
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
                 Enemy newEnemy = Instantiate(_enemyPrefab, Vector3.zero, Quaternion.identity);
-                _killer.Kill(newEnemy, () => newEnemy.LifeTime >= 10f);
+                _killer.KillWhen(newEnemy, () => newEnemy.LifeTime >= 10f);
             }
             
             if (Input.GetKeyDown(KeyCode.Alpha3))
             {
                 Enemy newEnemy = Instantiate(_enemyPrefab, Vector3.zero, Quaternion.identity);
-                _killer.Kill(newEnemy, () => _killer.Count > 10);
+                _killer.KillWhen(newEnemy, () => _killer.Count > 10);
             }
         }
     }

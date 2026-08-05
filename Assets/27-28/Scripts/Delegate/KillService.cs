@@ -9,26 +9,39 @@ namespace _27_28.Scripts.Delegate
     {
         private readonly MonoBehaviour _coroutineRunner;
         
-        private List<IKillable> _killables = new();
+        private readonly Dictionary<IKillable, List<Coroutine>> _killablesDictionary = new();
 
         public KillService(MonoBehaviour coroutineRunner)
         {
             _coroutineRunner = coroutineRunner;
         }
         
-        public int Count => _killables.Count;
+        public int Count => _killablesDictionary.Count;
         
-        public void Kill(IKillable killable, Func<bool> func)
+        public void KillWhen(IKillable killable, Func<bool> func)
         {
-            _killables.Add(killable);
-            _coroutineRunner.StartCoroutine(KillCoroutine(killable, func));
+            if (!_killablesDictionary.ContainsKey(killable))
+                _killablesDictionary.Add(killable, new List<Coroutine>());
+            
+            List<Coroutine> coroutines = _killablesDictionary[killable];
+            
+            coroutines.Add(_coroutineRunner.StartCoroutine(KillCoroutine(killable, func)));
         }
 
         private IEnumerator KillCoroutine(IKillable killable, Func<bool> func)
         {
             yield return new WaitUntil(func);
+            
+            List<Coroutine> coroutines = _killablesDictionary[killable];
+            
+            foreach (Coroutine coroutine in coroutines)
+            {
+                _coroutineRunner.StopCoroutine(coroutine);
+            }
+            
+            _killablesDictionary.Remove(killable);
+            
             killable.Kill();
-            _killables.Remove(killable);
         }
     }
 }
