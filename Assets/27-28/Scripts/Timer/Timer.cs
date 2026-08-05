@@ -8,6 +8,7 @@ namespace _27_28.Scripts.Timer
     {
         public event Action<float> TimerUpdated;
         public event Action TimerCompleted;
+        public event Action TimerReset;
         
         private float _timer;
         private bool _isRunning;
@@ -44,7 +45,7 @@ namespace _27_28.Scripts.Timer
         
         public void Reset()
         {
-            SetTime(0f);
+            _timer = 0f;
             _isRunning = false;
             
             if (_coroutine != null)
@@ -53,6 +54,8 @@ namespace _27_28.Scripts.Timer
                 _coroutine = null;
                 StartedTime = 0f;
             }
+            
+            TimerReset?.Invoke();
         }
 
         public void Pause()
@@ -92,6 +95,7 @@ namespace _27_28.Scripts.Timer
             }
 
             _coroutine = null;
+            _isRunning = false;
             TimerCompleted?.Invoke();
             StartedTime = 0f;
         }
