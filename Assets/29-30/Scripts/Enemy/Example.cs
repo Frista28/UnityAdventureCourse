@@ -19,19 +19,22 @@ namespace _29_30.Scripts.Enemy
 
         private void Start()
         {
-            foreach (var orkConfig in _orkConfigs)
+            for (int i = 0; i < 3; i++)
             {
-                _enemySpawner.Spawn<Ork, OrkConfig>(orkConfig);
+                var randomConfig = _orkConfigs[Random.Range(0, _orkConfigs.Length)];
+                _enemySpawner.Spawn<Ork, OrkConfig>(randomConfig);
             }
-            
-            foreach (var elfConfig in _elfConfigs)
+
+            for (int i = 0; i < 3; i++)
             {
-                _enemySpawner.Spawn<Elf, ElfConfig>(elfConfig);
+                var randomConfig = _elfConfigs[Random.Range(0, _elfConfigs.Length)];
+                _enemySpawner.Spawn<Elf, ElfConfig>(randomConfig);
             }
-            
-            foreach (var dragonConfig in _dragonConfigs)
+
+            for (int i = 0; i < 3; i++)
             {
-                _enemySpawner.Spawn<Dragon, DragonConfig>(dragonConfig);
+                var randomConfig = _dragonConfigs[Random.Range(0, _dragonConfigs.Length)];
+                _enemySpawner.Spawn<Dragon, DragonConfig>(randomConfig);
             }
         }
     }
