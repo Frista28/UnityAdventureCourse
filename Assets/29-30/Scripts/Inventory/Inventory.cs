@@ -1,45 +1,72 @@
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Inventory
+namespace _29_30.Scripts.Inventory
 {
-    public List<Item> _items = new();
-
-    public int CurrentSize => _items.Sum(item => item.Count);
-
-    public int MaxSize;
-
-    public Inventory(List<Item> items, int maxSize)
+    public class Inventory
     {
-        _items = items;
-        MaxSize = maxSize;
-    }
+        private List<Item> _items = new List<Item>();
 
-    public void Add(Item item)
-    {
-        if (CurrentSize + item.Count > MaxSize)
-            return;
-
-        _items.Add(item);
-    }
-
-    public List<Item> GetItemsBy(string name, int count)
-    {
-        _items = new List<Item>();
-
-        for (int i = 0; i < count; i++)
+        private int _maxSize;
+        
+        public Inventory(int maxSize)
         {
-            Item item = _items.First(item => item.Name == name);
-            _items.Remove(item);
+            if (maxSize < 1)
+                throw new ArgumentOutOfRangeException(nameof(maxSize), "Max size must be greater than zero.");
+            
+            _maxSize = maxSize;
+        }
+        
+        public bool IsNotFull => _items.Count < _maxSize;
+        public int Count => _items.Count;
+        public int MaxSize => _maxSize;
+
+        public void Add(Item item)
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
+            if (!IsNotFull)
+                throw new InvalidOperationException("Inventory is full.");
+
+            _items.Add(item);
         }
 
-        return _items;
-    }
-}
+        public IEnumerable<IGrouping<string, Item>> SeeAllItems() => _items.GroupBy(item => item.Name);
 
-public class Item
-{
-    public string Name;
-    public int Count;
+        public List<Item> GetItemsBy(string name, int count)
+        {
+            List<Item> getItems = new();
+            
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentException("Item name cannot be null or empty.", nameof(name));
+
+            if (count <= 0)
+                throw new ArgumentOutOfRangeException(nameof(count), "Count must be greater than zero.");
+
+            List<Item> matchingItems = _items.Where(item => item.Name == name).Take(count).ToList();
+            
+            if (matchingItems.Count < count)
+                throw new InvalidOperationException(
+                    $"Not enough items named '{name}'. Requested: {count}, available: {matchingItems.Count}.");
+            
+            foreach (Item item in matchingItems)
+            {
+                _items.Remove(item);
+            }
+
+            return matchingItems;
+        }
+    }
+    
+    public class Item
+    {
+        public string Name { get; }
+
+        public Item(string name)
+        {
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+        }
+    }
 }
