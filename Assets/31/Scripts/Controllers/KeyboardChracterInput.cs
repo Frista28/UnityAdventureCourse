@@ -1,0 +1,16 @@
+﻿using _31.Scripts.Controllers.Interfaces;
+using UnityEngine;
+
+namespace _31.Scripts.Controllers
+{
+    public class KeyboardCharacterInput : ICharacterInput
+    {
+        public Vector3 MoveDirection { get; private set; }
+        public Vector3 RotateDirection => MoveDirection;
+
+        public void Update(float deltaTime)
+        {
+            MoveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        }
+    }
+}
