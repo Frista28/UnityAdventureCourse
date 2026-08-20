@@ -1,13 +1,14 @@
-﻿using _31.Scripts.Components;
+﻿using _31.Scripts.Character;
+using _31.Scripts.Components;
 using _31.Scripts.Movable;
 using UnityEngine;
 
-namespace _31.Scripts.Character
+namespace _31.Scripts.CharactersFactories
 {
     public class CharacterFactory
     {
-        private CharacterMovementFactory _characterMovementFactory;
-        private CharacterUpdateService _characterUpdateService;
+        private readonly CharacterMovementFactory _characterMovementFactory;
+        private readonly CharacterUpdateService _characterUpdateService;
         
         public CharacterFactory(CharacterMovementFactory characterMovementFactory, CharacterUpdateService characterUpdateService)
         {
@@ -25,7 +26,7 @@ namespace _31.Scripts.Character
             
             CharacterController characterController = instance.GetComponent<CharacterController>();
             
-            CharacterMovement characterMovement = _characterMovementFactory.CreatePlayerCharacterMovement(characterController, instance.transform, spawnPosition, moveSpeed, rotationSpeed);
+            CharacterMovement characterMovement = _characterMovementFactory.CreatePlayerCharacterMovement(characterController, instance.transform, moveSpeed, rotationSpeed);
 
             Shooter shooter = new Shooter();
 
@@ -33,7 +34,7 @@ namespace _31.Scripts.Character
             
             instance.Initialize(characterMovement, health, shooter);
             
-            _characterUpdateService.Add(instance);
+            _characterUpdateService.Add(instance, instance);
             
             return instance;
         }
@@ -48,13 +49,13 @@ namespace _31.Scripts.Character
             
             CharacterController characterController = instance.GetComponent<CharacterController>();
             
-            CharacterMovement characterMovement = _characterMovementFactory.CreatePlayerCharacterMovement(characterController, instance.transform, spawnPosition, moveSpeed, rotationSpeed);
+            CharacterMovement characterMovement = _characterMovementFactory.CreatePlayerCharacterMovement(characterController, instance.transform, moveSpeed, rotationSpeed);
             
             Health health = new Health(100, 100);
             
             instance.Initialize(characterMovement, health);
             
-            _characterUpdateService.Add(instance);
+            _characterUpdateService.Add(instance, instance);
             
             return instance;
         }

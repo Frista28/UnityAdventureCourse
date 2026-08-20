@@ -7,9 +7,9 @@ using UnityEngine;
 namespace _31.Scripts.Character
 {
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerCharacter : MonoBehaviour, IMovable, IRotatable, IUpdatable
+    public class PlayerCharacter : MonoBehaviour, IMovable, IRotatable, IUpdatable, ICharacterLifecycle
     {
-        public event Action Died;
+        public event Action Destroyed;
         public event Action<float> HealthChanged;
         
         private CharacterMovement _movement;
@@ -37,7 +37,7 @@ namespace _31.Scripts.Character
             _movement.Update(deltaTime);
         }
         
-        private void OnDied() => Died?.Invoke();
+        private void OnDied() => Destroy(gameObject);
 
         private void OnHealthChanged(float currentHealth) => HealthChanged?.Invoke(currentHealth);
 
@@ -45,6 +45,7 @@ namespace _31.Scripts.Character
         {
             _health.Died -= OnDied;
             _health.HealthChanged -= OnHealthChanged;
+            Destroyed?.Invoke();
         }
     }
 }

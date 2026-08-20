@@ -1,7 +1,7 @@
-﻿using _31.Scripts.Controllers.Interfaces;
+﻿using _31.Scripts.Inputs.Interfaces;
 using UnityEngine;
 
-namespace _31.Scripts.Controllers
+namespace _31.Scripts.Inputs
 {
     public class KeyboardCharacterInput : ICharacterInput
     {

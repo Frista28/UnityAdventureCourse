@@ -1,6 +1,11 @@
-﻿using System;
-using _31.Scripts.Character;
+﻿using _31.Scripts.Character;
+using _31.Scripts.CharacterCreators;
+using _31.Scripts.CharacterCreators.Interfaces;
+using _31.Scripts.CharactersFactories;
 using _31.Scripts.Controllers;
+using _31.Scripts.Inputs;
+using _31.Scripts.Movable;
+using _31.Scripts.Spawners;
 using UnityEngine;
 
 namespace _31.Scripts.Infrastructure
@@ -9,9 +14,15 @@ namespace _31.Scripts.Infrastructure
     {
         [SerializeField] private PlayerCharacter _prefabPlayerCharacter;
         [SerializeField] private EnemyCharacter _prefabEnemyCharacter;
+
+        [SerializeField] private Transform[] _enemySpawnPoints;
+        
+        [SerializeField] private WinType _winType;
+        [SerializeField] private LoseType _loseType;
         
         private CharacterControllerUpdateService _characterControllerUpdateService;
         private CharacterUpdateService _characterUpdateService;
+        private EnemySpawnService _enemySpawnService;
         
         private CharacterMovementFactory _characterMovementFactory;
         private CharacterFactory _characterFactory;
@@ -31,22 +42,44 @@ namespace _31.Scripts.Infrastructure
                 new Vector3(0f, 0f, 0f),
                 5f,
                 900f);
+
+            playerCharacter.HealthChanged += OnPlayerHealthChanged;
             
-            _characterInputControllerFactory.Create(playerCharacter, playerCharacter, new KeyboardCharacterInput());
+            _characterInputControllerFactory.Create(playerCharacter, playerCharacter, playerCharacter, new KeyboardCharacterInput());
             
-            EnemyCharacter enemyCharacter = _characterFactory.CreateEnemy(
-                _prefabEnemyCharacter,
-                new Vector3(2f, 0f, 0f),
-                5f,
-                900f);
+            EnemyFactory enemyFactory = new EnemyFactory(_characterFactory, _characterInputControllerFactory);
+
+            IEnemyCreator aiEnemyCreator =
+                new AIEnemyCreator(enemyFactory, _prefabEnemyCharacter, playerCharacter.transform, 5f, 10f);
             
-            _characterInputControllerFactory.Create(enemyCharacter, enemyCharacter, new RandomCharacterInputInZone(5f, playerCharacter.transform, enemyCharacter.transform, 3f));
+            EnemySpawnerOnSpawnPoints enemySpawnerOnSpawnPoints = new EnemySpawnerOnSpawnPoints(
+                aiEnemyCreator,
+                _enemySpawnPoints);
+
+            _enemySpawnService = new EnemySpawnService(
+                enemySpawnerOnSpawnPoints,
+                7f);
         }
 
         private void Update()
         {
             _characterControllerUpdateService.Update();
             _characterUpdateService.Update(Time.deltaTime);
+            _enemySpawnService.Update(Time.deltaTime);
         }
+
+        private void OnPlayerHealthChanged(float newValue) => Debug.Log($"Health: {newValue}");
+    }
+    
+    public enum WinType
+    {
+        Time,
+        Kill
+    }
+
+    public enum LoseType
+    {
+        Die,
+        ManyEnemy
     }
 }

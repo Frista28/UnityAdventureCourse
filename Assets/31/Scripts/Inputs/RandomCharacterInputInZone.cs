@@ -1,7 +1,7 @@
-﻿using _31.Scripts.Controllers.Interfaces;
+﻿using _31.Scripts.Inputs.Interfaces;
 using UnityEngine;
 
-namespace _31.Scripts.Controllers
+namespace _31.Scripts.Inputs
 {
     public class RandomCharacterInputInZone : ICharacterInput
     {
@@ -41,12 +41,15 @@ namespace _31.Scripts.Controllers
         {
             Vector3 newDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
             
-            Vector3 directionToTarget = _target.position - _self.position;
-
-            if (directionToTarget.magnitude > _offset)
+            if (_target != null && _self != null)
             {
-                directionToTarget.y = 0f;
-                newDirection = directionToTarget.normalized;
+                Vector3 directionToTarget = _target.position - _self.position;
+
+                if (directionToTarget.magnitude > _offset)
+                {
+                    directionToTarget.y = 0f;
+                    newDirection = directionToTarget.normalized;
+                }
             }
 
             MoveDirection = newDirection;

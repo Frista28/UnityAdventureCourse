@@ -1,5 +1,5 @@
 ﻿using _31.Scripts.Character.Interfaces;
-using _31.Scripts.Controllers.Interfaces;
+using _31.Scripts.Inputs.Interfaces;
 
 namespace _31.Scripts.Controllers
 {

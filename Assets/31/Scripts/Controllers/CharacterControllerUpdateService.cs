@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _31.Scripts.Character.Interfaces;
 
 namespace _31.Scripts.Controllers
 {
@@ -6,10 +7,14 @@ namespace _31.Scripts.Controllers
     {
         private readonly List<DirectionCharacterController> _characterControllers = new();
 
-        public void Add(DirectionCharacterController characterController)
+        public void Add(DirectionCharacterController characterController, ICharacterLifecycle characterLifecycle)
         {
             _characterControllers.Add(characterController);
+
+            characterLifecycle.Destroyed += () => Remove(characterController);
         }
+        
+        public void Remove(DirectionCharacterController characterController) => _characterControllers.Remove(characterController);
 
         public void Update()
         {

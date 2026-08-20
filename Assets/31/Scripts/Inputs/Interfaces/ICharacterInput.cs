@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _31.Scripts.Controllers.Interfaces
+namespace _31.Scripts.Inputs.Interfaces
 {
     public interface ICharacterInput
     {
