@@ -1,9 +1,14 @@
-﻿using _31.Scripts.Characters.Configs;
+﻿using _31.Scripts.Characters;
+using _31.Scripts.Characters.Configs;
 using _31.Scripts.Characters.Creation;
 using _31.Scripts.Characters.Creation.Decorators.Controllers;
 using _31.Scripts.Characters.Creation.Initializers.Controllers;
 using _31.Scripts.Characters.Creation.Interfaces;
 using _31.Scripts.Components.Health;
+using _31.Scripts.Infrastructure.GameConditions.LoseGameConditions;
+using _31.Scripts.Infrastructure.GameConditions.LoseGameConditions.Interfaces;
+using _31.Scripts.Infrastructure.GameConditions.WinGameConditions;
+using _31.Scripts.Infrastructure.GameConditions.WinGameConditions.Interfaces;
 using _31.Scripts.Inputs;
 using _31.Scripts.Inputs.Configs.Movement;
 using _31.Scripts.Inputs.Creators;
@@ -18,18 +23,18 @@ namespace _31.Scripts.Infrastructure
 {
     public class Bootstrap : MonoBehaviour
     {
-        [SerializeField] private Characters.Character _prefabPlayerCharacter;
+        [SerializeField] private Character _prefabPlayerCharacter;
         [SerializeField] private CharacterConfig _playerCharacterConfig;
         [SerializeField] private MovementInputConfig _playerMovementInputConfig;
         
-        [SerializeField] private Characters.Character _prefabEnemyCharacter;
+        [SerializeField] private Character _prefabEnemyCharacter;
         [SerializeField] private CharacterConfig _enemyCharacterConfig;
         [SerializeField] private MovementInputConfig _enemyMovementInputConfig;
 
         [SerializeField] private Transform[] _enemySpawnPoints;
         
-        [SerializeField] private WinType _winType;
-        [SerializeField] private LoseType _loseType;
+        [SerializeField] private WinConditionType _winConditionType;
+        [SerializeField] private LoseConditionType loseConditionType;
         
         private readonly MovementControllerUpdateService _movementControllerUpdateService = new();
         private readonly UpdateService _updateService = new();
@@ -39,11 +44,17 @@ namespace _31.Scripts.Infrastructure
         private readonly MovementFactory _movementFactory = new();
         private readonly HealthFactory _healthFactory = new();
         
-        private TimedCharacterSpawnService<Characters.Character> _timedCharacterSpawnService;
+        private readonly DestroyableEventService _destroyableEnemyEventService = new();
+        
+        private TimedCharacterSpawnService<Character> _timedCharacterSpawnService;
         
         private MovementInputFactory _movementInputFactory;
         private MovementControllerFactory _movementControllerFactory;
-        private CharacterFactory<Characters.Character> _characterFactory;
+        private CharacterFactory<Character> _characterFactory;
+        
+        private Character _playerCharacter;
+        
+        private GameMode _gameMode;
 
         private void Awake()
         {
@@ -52,35 +63,49 @@ namespace _31.Scripts.Infrastructure
             RandomTargetInputCreator randomTargetInputCreator = new RandomTargetInputCreator(_targetProvider);
             _movementInputFactory =  new MovementInputFactory(randomTargetInputCreator);
             
-            _characterFactory = new CharacterFactory<Characters.Character>(_movementFactory, _healthFactory, _updateService);
+            _characterFactory = new CharacterFactory<Character>(_movementFactory, _healthFactory, _updateService);
             
-            CharacterMovementControllerInitializer<Characters.Character> characterMovementControllerInitializer = new CharacterMovementControllerInitializer<Characters.Character>(_movementInputFactory, _movementControllerFactory);
+            CharacterMovementControllerInitializer<Character> characterMovementControllerInitializer = new CharacterMovementControllerInitializer<Character>(_movementInputFactory, _movementControllerFactory);
 
             // Собираем игрока
-            ICharacterCreator<Characters.Character> playerCharacterCreator;
-            playerCharacterCreator = new CharacterCreator<Characters.Character>(_characterFactory, _prefabPlayerCharacter, _playerCharacterConfig);
-            playerCharacterCreator = new MovementControllerCharacterCreator<Characters.Character>(
+            ICharacterCreator<Character> playerCharacterCreator;
+            playerCharacterCreator = new CharacterCreator<Character>(_characterFactory, _prefabPlayerCharacter, _playerCharacterConfig);
+            playerCharacterCreator = new MovementControllerCharacterCreator<Character>(
                 playerCharacterCreator, characterMovementControllerInitializer, _playerMovementInputConfig);
 
-            Characters.Character playerCharacter = playerCharacterCreator.Create(new Vector3(0, 0, 0));
+            _playerCharacter = playerCharacterCreator.Create(new Vector3(0, 0, 0));
             
-            _targetProvider.SetTarget(playerCharacter.transform);
+            _targetProvider.SetTarget(_playerCharacter.transform);
             
-            playerCharacter.HealthChanged += OnPlayerHealthChanged;
+            _playerCharacter.HealthChanged += OnPlayerHealthChanged;
 
             // Собираем врага
-            ICharacterCreator<Characters.Character> enemyCharacterCreator;
-            enemyCharacterCreator = new CharacterCreator<Characters.Character>(_characterFactory, _prefabEnemyCharacter, _enemyCharacterConfig);
-            enemyCharacterCreator = new MovementControllerCharacterCreator<Characters.Character>(enemyCharacterCreator,
+            ICharacterCreator<Character> enemyCharacterCreator;
+            enemyCharacterCreator = new CharacterCreator<Character>(_characterFactory, _prefabEnemyCharacter, _enemyCharacterConfig);
+            enemyCharacterCreator = new MovementControllerCharacterCreator<Character>(enemyCharacterCreator,
                 characterMovementControllerInitializer, _enemyMovementInputConfig);
+            enemyCharacterCreator = new TrackingCharacterCreator<Character>(enemyCharacterCreator, _destroyableEnemyEventService);
             
-            CharacterSpawnerOnSpawnPoints<Characters.Character> characterSpawnerOnSpawnPoints = new CharacterSpawnerOnSpawnPoints<Characters.Character>(
+            CharacterSpawnerOnSpawnPoints<Character> characterSpawnerOnSpawnPoints = new CharacterSpawnerOnSpawnPoints<Character>(
                 enemyCharacterCreator,
                 _enemySpawnPoints);
 
-            _timedCharacterSpawnService = new TimedCharacterSpawnService<Characters.Character>(
+            _timedCharacterSpawnService = new TimedCharacterSpawnService<Character>(
                 characterSpawnerOnSpawnPoints,
                 7f);
+
+            WinConditionFactory winConditionFactory = new WinConditionFactory(_updateService, _destroyableEnemyEventService);
+
+            LoseConditionFactory loseConditionFactory = new LoseConditionFactory(_playerCharacter, _destroyableEnemyEventService);
+            
+            IWinCondition winCondition = winConditionFactory.Create(_winConditionType);
+
+            ILoseCondition loseCondition = loseConditionFactory.Create(loseConditionType);
+
+            _gameMode = new GameMode(winCondition, loseCondition);
+
+            _gameMode.Win += OnWinCondition;
+            _gameMode.Lose += OnLoseCondition;
         }
 
         private void Update()
@@ -88,20 +113,35 @@ namespace _31.Scripts.Infrastructure
             _movementControllerUpdateService.Update();
             _updateService.Update(Time.deltaTime);
             _timedCharacterSpawnService.Update(Time.deltaTime);
+            _gameMode.Update();
+        }
+
+        private void OnDestroy()
+        {
+            _playerCharacter.HealthChanged -= OnPlayerHealthChanged;
+            
+            _gameMode.Win -= OnWinCondition;
+            _gameMode.Lose -= OnLoseCondition;
+            
+            _gameMode.Dispose();
         }
 
         private void OnPlayerHealthChanged(float newValue) => Debug.Log($"Health: {newValue}");
+
+        private void OnWinCondition() => Debug.Log("Win");
+        
+        private void OnLoseCondition() => Debug.Log("Lose");
     }
     
-    public enum WinType
+    public enum WinConditionType
     {
-        Time,
-        Kill
+        SurviveTime,
+        KillEnemies
     }
 
-    public enum LoseType
+    public enum LoseConditionType
     {
-        Die,
-        ManyEnemy
+        PlayerDeath,
+        EnemyLimit
     }
 }

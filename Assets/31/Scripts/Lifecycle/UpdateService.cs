@@ -17,7 +17,7 @@ namespace _31.Scripts.Lifecycle
 
         public void Update(float deltaTime)
         {
-            foreach (IUpdatable updatable in _updatables)
+            foreach (IUpdatable updatable in _updatables.ToArray())
             {
                 updatable.Tick(deltaTime);
             }
