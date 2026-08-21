@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _31.Scripts.Inputs
 {
-    public class KeyboardCharacterInput : ICharacterInput
+    public class KeyboardMovementInput : IMovementInput
     {
         public Vector3 MoveDirection { get; private set; }
         public Vector3 RotateDirection => MoveDirection;

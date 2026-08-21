@@ -1,5 +1,4 @@
-﻿using _31.Scripts.Character;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace _31.Scripts.Components
 {
@@ -9,7 +8,7 @@ namespace _31.Scripts.Components
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!other.TryGetComponent(out PlayerCharacter player))
+            if (!other.TryGetComponent(out Characters.Character player))
                 return;
 
             player.TakeDamage(_damage);

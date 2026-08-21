@@ -1,0 +1,13 @@
+﻿using UnityEngine;
+
+namespace _31.Scripts.Movement.Rotator
+{
+    public interface IRotator
+    {
+        public Vector3 Direction { get; }
+
+        public void SetDirection(Vector3 direction);
+
+        public void Rotate(float deltaTime);
+    }
+}

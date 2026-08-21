@@ -625,10 +625,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2300a66a0a924acebea0caf2aa9fdb3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _prefabPlayerCharacter: {fileID: 8896932133595542398, guid: 8b5cb36ac25d36c4abcafb54d4649af5,
+  _prefabPlayerCharacter: {fileID: 8872049564222507811, guid: 8b5cb36ac25d36c4abcafb54d4649af5,
     type: 3}
-  _prefabEnemyCharacter: {fileID: 2729551252869703213, guid: 88784ad7ae92a994da6856e59658af07,
+  _playerCharacterConfig: {fileID: 11400000, guid: d26c0700412472c479c1a228bb042373,
+    type: 2}
+  _playerMovementInputConfig: {fileID: 11400000, guid: 2a51ba28dbacf2a4db0eae08462471d3,
+    type: 2}
+  _prefabEnemyCharacter: {fileID: 5906069862389368412, guid: 88784ad7ae92a994da6856e59658af07,
     type: 3}
+  _enemyCharacterConfig: {fileID: 11400000, guid: 525aeef633151f04caf56a275c980766,
+    type: 2}
+  _enemyMovementInputConfig: {fileID: 11400000, guid: a79bea18eb28b794e9639ec4293c49ac,
+    type: 2}
   _enemySpawnPoints:
   - {fileID: 2029361230}
   - {fileID: 1336867437}
