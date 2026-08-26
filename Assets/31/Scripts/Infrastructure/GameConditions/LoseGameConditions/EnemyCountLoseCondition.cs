@@ -15,6 +15,6 @@ namespace _31.Scripts.Infrastructure.GameConditions.LoseGameConditions
             _enemyCountToLose = enemyCountToLose;
         }
 
-        public bool IsCompleted => _enemyCountToLose >= _destroyableEnemyEventService.Count;
+        public bool IsCompleted => _destroyableEnemyEventService.Count >= _enemyCountToLose;
     }
 }
