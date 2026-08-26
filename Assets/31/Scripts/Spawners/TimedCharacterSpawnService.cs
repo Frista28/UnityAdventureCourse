@@ -16,6 +16,7 @@ namespace _31.Scripts.Spawners
             _characterSpawner = characterSpawner;
             _spawnCooldown = spawnCooldown;
             
+            // Добавить сервис хранения заспавненных персонажей, а то сейчас они пропадают в пустоту
             Spawn();
         }
 

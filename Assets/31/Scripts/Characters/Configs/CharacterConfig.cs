@@ -1,6 +1,6 @@
 ﻿using _31.Scripts.Components.Health.Configs;
-using _31.Scripts.Movement.Configs.Movers;
-using _31.Scripts.Movement.Configs.Rotators;
+using _31.Scripts.Components.Movement.Configs.Movers;
+using _31.Scripts.Components.Movement.Configs.Rotators;
 using UnityEngine;
 
 namespace _31.Scripts.Characters.Configs

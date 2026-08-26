@@ -1,8 +1,8 @@
 ﻿using System;
 using _31.Scripts.Components.Health;
 using _31.Scripts.Components.Health.Interfaces;
+using _31.Scripts.Components.Movement.Interfaces;
 using _31.Scripts.Lifecycle.Interfaces;
-using _31.Scripts.Movement.Interfaces;
 using UnityEngine;
 
 namespace _31.Scripts.Characters
@@ -12,10 +12,10 @@ namespace _31.Scripts.Characters
         public event Action Destroyed;
         public event Action<float> HealthChanged;
         
-        private Movement.Movement _movement;
+        private Components.Movement.Movement _movement;
         private Health _health;
         
-        public void InitializeMovement(Movement.Movement movement) => _movement = movement;
+        public void InitializeMovement(Components.Movement.Movement movement) => _movement = movement;
 
         public void InitializeHealth(Health health)
         {
@@ -29,7 +29,7 @@ namespace _31.Scripts.Characters
 
         public void SetRotateDirection(Vector3 direction) => _movement.SetRotateDirection(direction);
 
-        public void TakeDamage(float damage) => _health.TakeDamage(damage); 
+        public void TakeDamage(float damage) => _health.TakeDamage(damage);
         
         public void Tick(float deltaTime)
         {

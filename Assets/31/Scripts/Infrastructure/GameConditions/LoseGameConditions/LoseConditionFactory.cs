@@ -1,5 +1,6 @@
 ﻿using System;
 using _31.Scripts.Infrastructure.GameConditions.LoseGameConditions.Interfaces;
+using _31.Scripts.Infrastructure.Teams;
 using _31.Scripts.Lifecycle;
 using _31.Scripts.Lifecycle.Interfaces;
 

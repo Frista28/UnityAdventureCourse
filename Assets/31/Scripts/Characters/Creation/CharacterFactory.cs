@@ -1,7 +1,7 @@
 ﻿using _31.Scripts.Characters.Configs;
 using _31.Scripts.Components.Health;
+using _31.Scripts.Components.Movement;
 using _31.Scripts.Lifecycle;
-using _31.Scripts.Movement;
 using UnityEngine;
 
 namespace _31.Scripts.Characters.Creation
@@ -43,7 +43,7 @@ namespace _31.Scripts.Characters.Creation
 
         private void CreateCharacterMovement(TCharacter instance, CharacterConfig characterConfig)
         {
-            Movement.Movement movement = _movementFactory.Create(instance, characterConfig.MoverConfig, characterConfig.RotatorConfig);
+            Scripts.Components.Movement.Movement movement = _movementFactory.Create(instance, characterConfig.MoverConfig, characterConfig.RotatorConfig);
             
             instance.InitializeMovement(movement);
         }
