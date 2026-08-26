@@ -1,6 +1,7 @@
 ﻿using System;
 using _31.Scripts.Infrastructure.GameConditions.WinGameConditions.Interfaces;
 using _31.Scripts.Lifecycle;
+using UnityEngine;
 
 namespace _31.Scripts.Infrastructure.GameConditions.WinGameConditions
 {
@@ -29,6 +30,10 @@ namespace _31.Scripts.Infrastructure.GameConditions.WinGameConditions
             _destroyableEnemyEventService.DestroyableDestroyed -= OnDestroyableDestroyed;
         }
 
-        private void OnDestroyableDestroyed() => _kills++;
+        private void OnDestroyableDestroyed()
+        {
+            _kills++;
+            Debug.Log($"Enemy destroyed, kills: {_kills}/{_requiredKills}");
+        }
     }
 }

@@ -689,8 +689,8 @@ MonoBehaviour:
   - {fileID: 1336867437}
   - {fileID: 255845421}
   - {fileID: 202048485}
-  _winConditionType: 0
-  loseConditionType: 0
+  _winConditionType: 1
+  loseConditionType: 1
 --- !u!4 &2065221817
 Transform:
   m_ObjectHideFlags: 0

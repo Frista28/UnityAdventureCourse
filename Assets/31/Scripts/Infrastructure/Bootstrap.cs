@@ -1,28 +1,14 @@
 ﻿using _31.Scripts.Characters;
 using _31.Scripts.Characters.Configs;
-using _31.Scripts.Characters.Creation;
-using _31.Scripts.Characters.Creation.Components.Weapon.RangeWeapon;
-using _31.Scripts.Characters.Creation.Controllers.Movement;
-using _31.Scripts.Characters.Creation.Interfaces;
-using _31.Scripts.Characters.Creation.Tracking;
-using _31.Scripts.Components.Health;
-using _31.Scripts.Components.Movement;
 using _31.Scripts.Components.Movement.Controller;
-using _31.Scripts.Components.Weapons.RangeWeapon.Hit;
 using _31.Scripts.Components.Weapons.RangeWeapon.Hit.Config;
-using _31.Scripts.Components.Weapons.RangeWeapon.Hit.Creators;
-using _31.Scripts.Hits.Data.Config;
-using _31.Scripts.Hits.Data.CustomData.Damage;
+using _31.Scripts.Infrastructure.Composition;
 using _31.Scripts.Infrastructure.GameConditions.LoseGameConditions;
 using _31.Scripts.Infrastructure.GameConditions.LoseGameConditions.Interfaces;
 using _31.Scripts.Infrastructure.GameConditions.WinGameConditions;
 using _31.Scripts.Infrastructure.GameConditions.WinGameConditions.Interfaces;
-using _31.Scripts.Inputs;
 using _31.Scripts.Inputs.Configs.Movement;
-using _31.Scripts.Inputs.Creators;
-using _31.Scripts.Interaction.Service.Hit.Damage;
 using _31.Scripts.Lifecycle;
-using _31.Scripts.Spawners;
 using _31.Scripts.Targets;
 using UnityEngine;
 
@@ -46,84 +32,49 @@ namespace _31.Scripts.Infrastructure
         
         private readonly MovementControllerUpdateService _movementControllerUpdateService = new();
         private readonly UpdateService _updateService = new();
+        private GameMode _gameMode;
 
-        private TimedCharacterSpawnService<Character> _timedCharacterSpawnService;
+        private PlayerComposition _playerComposition;
+        private EnemyComposition _enemyComposition;
+        private EnemySpawnerComposition _enemySpawnerComposition;
         
         private RangeWeaponUserCharacter _playerCharacter;
-        
-        private GameMode _gameMode;
 
         private void Awake()
         {
-            // Создание фабрик и инициализаторов для создания базового персонажа
-            MovementFactory movementFactory = new();
-            HealthFactory healthFactory = new();
-            
-            CharacterFactory<Character> characterFactory = new CharacterFactory<Character>(movementFactory, healthFactory, _updateService);
-            CharacterFactory<RangeWeaponUserCharacter> shooterCharacterFactory = new CharacterFactory<RangeWeaponUserCharacter>(movementFactory, healthFactory, _updateService);
-            
-            // Создание фабрик и инициализаторов для подключения управления движения к персонажам
             TargetProvider targetProvider = new();
             
-            RandomTargetInputCreator randomTargetInputCreator = new RandomTargetInputCreator(targetProvider);
-            MovementInputFactory movementInputFactory = new MovementInputFactory(randomTargetInputCreator);
-            MovementControllerFactory movementControllerFactory = new MovementControllerFactory(_movementControllerUpdateService);
-            
-            MovementControllerCharacterInitializer<Character> movementControllerCharacterInitializer = new MovementControllerCharacterInitializer<Character>(movementInputFactory, movementControllerFactory);
-            MovementControllerCharacterInitializer<RangeWeaponUserCharacter> movementControllerShooterCharacterInitializer = new MovementControllerCharacterInitializer<RangeWeaponUserCharacter>(movementInputFactory, movementControllerFactory);
-            
-            // Создание фабрик и инициализатора и прочего для создания и добавления оружия к персонажу
-            DamageHitDataFactory damageHitDataFactory = new DamageHitDataFactory();
-            
-            HitRangeWeaponBuilder<DamageHitData, DamageHitDataConfig> damageHitRangeWeaponBuilder =
-                new HitRangeWeaponBuilder<DamageHitData, DamageHitDataConfig>(damageHitDataFactory);
-
-            TeamDamageHitInteractService teamDamageHitInteractService = new TeamDamageHitInteractService();
-            
-            DamageHitRangeWeaponCreator damageHitRangeWeaponCreator = new DamageHitRangeWeaponCreator(damageHitRangeWeaponBuilder, teamDamageHitInteractService);
-            
-            HitRangeWeaponCreatorRegistry hitRangeWeaponCreatorRegistry = new HitRangeWeaponCreatorRegistry();
-            hitRangeWeaponCreatorRegistry.Register(damageHitRangeWeaponCreator);
-            
-            HitRangeWeaponFactory hitRangeWeaponFactory = new HitRangeWeaponFactory(hitRangeWeaponCreatorRegistry);
-
-            HitRangeWeaponCharacterInitializer<RangeWeaponUserCharacter> rangeWeaponShooterCharacterInitializer = new HitRangeWeaponCharacterInitializer<RangeWeaponUserCharacter>(hitRangeWeaponFactory);
-            
-            // Создание прочих зависимостей
             DestroyableEventService destroyableEnemyEventService = new();
 
-            // Собираем игрока
-            ICharacterCreator<RangeWeaponUserCharacter> playerCharacterCreator;
-            playerCharacterCreator = new CharacterCreator<RangeWeaponUserCharacter>(shooterCharacterFactory, _prefabPlayerCharacter, _playerCharacterConfig);
-            playerCharacterCreator = new MovementControllerCharacterCreator<RangeWeaponUserCharacter>(
-                playerCharacterCreator, 
-                movementControllerShooterCharacterInitializer, 
-                _playerMovementInputConfig);
-            playerCharacterCreator = new HitRangeWeaponCharacterCreator<RangeWeaponUserCharacter>(
-                playerCharacterCreator,
-                rangeWeaponShooterCharacterInitializer, 
-                _playerHitRangeWeaponConfig);
-
-            _playerCharacter = playerCharacterCreator.Create(new Vector3(0, 0, 0));
+            _playerComposition = new PlayerComposition(
+                _prefabPlayerCharacter,
+                _playerCharacterConfig,
+                _playerMovementInputConfig,
+                _playerHitRangeWeaponConfig,
+                _updateService,
+                _movementControllerUpdateService,
+                targetProvider);
+            
+            _playerCharacter = _playerComposition.Create(Vector3.zero);
             
             targetProvider.SetTarget(_playerCharacter.transform);
             
             _playerCharacter.HealthChanged += OnPlayerHealthChanged;
 
-            // Собираем врага
-            ICharacterCreator<Character> enemyCharacterCreator;
-            enemyCharacterCreator = new CharacterCreator<Character>(characterFactory, _prefabEnemyCharacter, _enemyCharacterConfig);
-            enemyCharacterCreator = new MovementControllerCharacterCreator<Character>(enemyCharacterCreator,
-                movementControllerCharacterInitializer, _enemyMovementInputConfig);
-            enemyCharacterCreator = new TrackingCharacterCreator<Character>(enemyCharacterCreator, destroyableEnemyEventService);
-            
-            CharacterSpawnerOnSpawnPoints<Character> characterSpawnerOnSpawnPoints = new CharacterSpawnerOnSpawnPoints<Character>(
-                enemyCharacterCreator,
-                _enemySpawnPoints);
+            _enemyComposition = new EnemyComposition(
+                _prefabEnemyCharacter,
+                _enemyCharacterConfig,
+                _enemyMovementInputConfig,
+                _updateService,
+                _movementControllerUpdateService,
+                targetProvider,
+                destroyableEnemyEventService);
 
-            _timedCharacterSpawnService = new TimedCharacterSpawnService<Character>(
-                characterSpawnerOnSpawnPoints,
-                7f);
+            _enemySpawnerComposition = new EnemySpawnerComposition(
+                _enemyComposition.EnemyCreator,
+                _enemySpawnPoints,
+                3f);
+            
 
             WinConditionFactory winConditionFactory = new WinConditionFactory(_updateService, destroyableEnemyEventService);
 
@@ -143,11 +94,8 @@ namespace _31.Scripts.Infrastructure
         {
             _movementControllerUpdateService.Update();
             _updateService.Update(Time.deltaTime);
-            _timedCharacterSpawnService.Update(Time.deltaTime);
+            _enemySpawnerComposition.Update(Time.deltaTime);
             _gameMode.Update();
-            
-            if (Input.GetKeyDown(KeyCode.Space))
-                _playerCharacter.UseWeapon();
         }
 
         private void OnDestroy()
