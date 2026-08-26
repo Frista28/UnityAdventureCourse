@@ -7,6 +7,6 @@ namespace _31.Scripts.Inputs.Interfaces
         Vector3 MoveDirection { get; }
         Vector3 RotateDirection { get; }
         
-        void Update(float deltaTime = 0);
+        void Update();
     }
 }

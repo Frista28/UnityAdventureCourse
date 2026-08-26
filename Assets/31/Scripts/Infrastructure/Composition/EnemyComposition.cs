@@ -7,6 +7,7 @@ using _31.Scripts.Characters.Creation.Tracking;
 using _31.Scripts.Components.Health;
 using _31.Scripts.Components.Movement;
 using _31.Scripts.Components.Movement.Controller;
+using _31.Scripts.Components.Movement.Controller.Movement;
 using _31.Scripts.Inputs;
 using _31.Scripts.Inputs.Configs.Movement;
 using _31.Scripts.Inputs.Creators;
@@ -29,7 +30,6 @@ namespace _31.Scripts.Infrastructure.Composition
             CharacterConfig characterConfig,
             MovementInputConfig movementInputConfig,
             UpdateService updateService,
-            MovementControllerUpdateService movementControllerUpdateService,
             TargetProvider targetProvider,
             DestroyableEventService destroyableEventService)
         {
@@ -39,7 +39,6 @@ namespace _31.Scripts.Infrastructure.Composition
 
             _enemyCreator = CreateEnemyCreator(
                 updateService,
-                movementControllerUpdateService,
                 targetProvider,
                 destroyableEventService);
         }
@@ -50,7 +49,6 @@ namespace _31.Scripts.Infrastructure.Composition
 
         private ICharacterCreator<Character> CreateEnemyCreator(
             UpdateService updateService,
-            MovementControllerUpdateService movementControllerUpdateService,
             TargetProvider targetProvider,
             DestroyableEventService destroyableEventService)
         {
@@ -70,8 +68,7 @@ namespace _31.Scripts.Infrastructure.Composition
                 new MovementInputFactory(movementInputCreator);
 
             MovementControllerFactory movementControllerFactory =
-                new MovementControllerFactory(
-                    movementControllerUpdateService);
+                new MovementControllerFactory(updateService);
 
             MovementControllerCharacterInitializer<Character>
                 movementInitializer =

@@ -3,10 +3,13 @@ using _31.Scripts.Characters.Configs;
 using _31.Scripts.Characters.Creation;
 using _31.Scripts.Characters.Creation.Components.Weapon.RangeWeapon;
 using _31.Scripts.Characters.Creation.Controllers.Movement;
+using _31.Scripts.Characters.Creation.Controllers.Weapon;
 using _31.Scripts.Characters.Creation.Interfaces;
 using _31.Scripts.Components.Health;
 using _31.Scripts.Components.Movement;
 using _31.Scripts.Components.Movement.Controller;
+using _31.Scripts.Components.Movement.Controller.Movement;
+using _31.Scripts.Components.Weapons.Controller;
 using _31.Scripts.Components.Weapons.RangeWeapon.Hit;
 using _31.Scripts.Components.Weapons.RangeWeapon.Hit.Config;
 using _31.Scripts.Components.Weapons.RangeWeapon.Hit.Creators;
@@ -37,7 +40,6 @@ namespace _31.Scripts.Infrastructure.Composition
             MovementInputConfig movementInputConfig,
             HitRangeWeaponConfig weaponConfig,
             UpdateService updateService,
-            MovementControllerUpdateService movementControllerUpdateService,
             TargetProvider targetProvider)
         {
             _prefab = prefab;
@@ -47,7 +49,6 @@ namespace _31.Scripts.Infrastructure.Composition
 
             _characterCreator = CreateCharacterCreator(
                 updateService,
-                movementControllerUpdateService,
                 targetProvider);
         }
         
@@ -58,12 +59,12 @@ namespace _31.Scripts.Infrastructure.Composition
 
         private ICharacterCreator<RangeWeaponUserCharacter> CreateCharacterCreator(
             UpdateService updateService,
-            MovementControllerUpdateService movementControllerUpdateService,
             TargetProvider targetProvider)
         {
+            // Создание инициализёра для базового персонажа
             MovementFactory movementFactory = new();
             HealthFactory healthFactory = new();
-
+            
             CharacterFactory<RangeWeaponUserCharacter> characterFactory =
                 new CharacterFactory<RangeWeaponUserCharacter>(
                     movementFactory,
@@ -77,14 +78,16 @@ namespace _31.Scripts.Infrastructure.Composition
                 new MovementInputFactory(movementInputCreator);
 
             MovementControllerFactory movementControllerFactory =
-                new MovementControllerFactory(movementControllerUpdateService);
-
+                new MovementControllerFactory(updateService);
+            
+            // Создание управления передвижения персонажа
             MovementControllerCharacterInitializer<RangeWeaponUserCharacter>
                 movementInitializer =
                     new MovementControllerCharacterInitializer<RangeWeaponUserCharacter>(
                         movementInputFactory,
                         movementControllerFactory);
-
+            
+            // Создание оружия для игрока
             DamageHitDataFactory damageHitDataFactory =
                 new DamageHitDataFactory();
 
@@ -109,11 +112,17 @@ namespace _31.Scripts.Infrastructure.Composition
             HitRangeWeaponFactory weaponFactory =
                 new HitRangeWeaponFactory(weaponCreatorRegistry);
 
-            HitRangeWeaponCharacterInitializer<RangeWeaponUserCharacter>
-                weaponInitializer =
-                    new HitRangeWeaponCharacterInitializer<RangeWeaponUserCharacter>(
-                        weaponFactory);
-
+            HitRangeWeaponCharacterInitializer<RangeWeaponUserCharacter> weaponInitializer =
+                new HitRangeWeaponCharacterInitializer<RangeWeaponUserCharacter>(weaponFactory);
+            
+            // Создание управления для персонажа
+            WeaponControllerFactory weaponControllerFactory =
+                new WeaponControllerFactory(updateService);
+            
+            WeaponControllerCharacterInitializer<RangeWeaponUserCharacter> weaponControllerInitializer =
+                new WeaponControllerCharacterInitializer<RangeWeaponUserCharacter>(weaponControllerFactory);
+            
+            // Создание персонажа
             ICharacterCreator<RangeWeaponUserCharacter> creator =
                 new CharacterCreator<RangeWeaponUserCharacter>(
                     characterFactory,
@@ -131,6 +140,11 @@ namespace _31.Scripts.Infrastructure.Composition
                     creator,
                     weaponInitializer,
                     _weaponConfig);
+
+            creator =
+                new WeaponControllerCharacterCreator<RangeWeaponUserCharacter>(
+                    creator,
+                    weaponControllerInitializer);
 
             return creator;
         }

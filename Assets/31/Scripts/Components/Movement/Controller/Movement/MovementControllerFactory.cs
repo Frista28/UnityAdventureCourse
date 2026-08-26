@@ -1,16 +1,17 @@
 ﻿using _31.Scripts.Components.Movement.Interfaces;
 using _31.Scripts.Inputs.Interfaces;
+using _31.Scripts.Lifecycle;
 using _31.Scripts.Lifecycle.Interfaces;
 
-namespace _31.Scripts.Components.Movement.Controller
+namespace _31.Scripts.Components.Movement.Controller.Movement
 {
     public class MovementControllerFactory
     {
-        private readonly MovementControllerUpdateService _movementControllerUpdateService;
+        private readonly UpdateService _updateService;
 
-        public MovementControllerFactory(MovementControllerUpdateService movementControllerUpdateService)
+        public MovementControllerFactory(UpdateService updateService)
         {
-            _movementControllerUpdateService = movementControllerUpdateService;
+            _updateService = updateService;
         }
         
         public MovementController Create(
@@ -21,7 +22,7 @@ namespace _31.Scripts.Components.Movement.Controller
         {
             MovementController controller = new MovementController(movable, rotatable, movementInput);
             
-            _movementControllerUpdateService.Add(controller, destroyable);
+            _updateService.Add(controller, destroyable);
             
             return controller;
         }

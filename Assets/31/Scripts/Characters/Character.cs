@@ -2,11 +2,13 @@
 using _31.Scripts.Components.Health;
 using _31.Scripts.Components.Health.Interfaces;
 using _31.Scripts.Components.Movement.Interfaces;
+using _31.Scripts.Components.Teams;
 using _31.Scripts.Lifecycle.Interfaces;
 using UnityEngine;
 
 namespace _31.Scripts.Characters
 {
+    [RequireComponent(typeof(TeamMember))]
     public class Character : MonoBehaviour, IMovable, IRotatable, IUpdatable, IDamageable, IDestroyable
     {
         public event Action Destroyed;

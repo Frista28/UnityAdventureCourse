@@ -30,7 +30,6 @@ namespace _31.Scripts.Infrastructure
         [SerializeField] private WinConditionType _winConditionType;
         [SerializeField] private LoseConditionType loseConditionType;
         
-        private readonly MovementControllerUpdateService _movementControllerUpdateService = new();
         private readonly UpdateService _updateService = new();
         private GameMode _gameMode;
 
@@ -52,7 +51,6 @@ namespace _31.Scripts.Infrastructure
                 _playerMovementInputConfig,
                 _playerHitRangeWeaponConfig,
                 _updateService,
-                _movementControllerUpdateService,
                 targetProvider);
             
             _playerCharacter = _playerComposition.Create(Vector3.zero);
@@ -66,7 +64,6 @@ namespace _31.Scripts.Infrastructure
                 _enemyCharacterConfig,
                 _enemyMovementInputConfig,
                 _updateService,
-                _movementControllerUpdateService,
                 targetProvider,
                 destroyableEnemyEventService);
 
@@ -92,7 +89,6 @@ namespace _31.Scripts.Infrastructure
 
         private void Update()
         {
-            _movementControllerUpdateService.Update();
             _updateService.Update(Time.deltaTime);
             _enemySpawnerComposition.Update(Time.deltaTime);
             _gameMode.Update();

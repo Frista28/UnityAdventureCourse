@@ -8,7 +8,7 @@ namespace _31.Scripts.Inputs
         public Vector3 MoveDirection { get; private set; }
         public Vector3 RotateDirection => MoveDirection;
 
-        public void Update(float deltaTime)
+        public void Update()
         {
             MoveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
         }

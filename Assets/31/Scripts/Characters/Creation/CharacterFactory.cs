@@ -43,7 +43,7 @@ namespace _31.Scripts.Characters.Creation
 
         private void CreateCharacterMovement(TCharacter instance, CharacterConfig characterConfig)
         {
-            Scripts.Components.Movement.Movement movement = _movementFactory.Create(instance, characterConfig.MoverConfig, characterConfig.RotatorConfig);
+            Movement movement = _movementFactory.Create(instance, characterConfig.MoverConfig, characterConfig.RotatorConfig);
             
             instance.InitializeMovement(movement);
         }

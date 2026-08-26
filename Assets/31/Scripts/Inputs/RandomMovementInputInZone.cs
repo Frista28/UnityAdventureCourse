@@ -26,7 +26,7 @@ namespace _31.Scripts.Inputs
         public Vector3 MoveDirection { get; private set; }
         public Vector3 RotateDirection => MoveDirection;
 
-        public void Update(float deltaTime = 0)
+        public void Update()
         {
             _timer += Time.deltaTime;
             

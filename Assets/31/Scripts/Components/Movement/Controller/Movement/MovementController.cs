@@ -1,9 +1,10 @@
 ﻿using _31.Scripts.Components.Movement.Interfaces;
 using _31.Scripts.Inputs.Interfaces;
+using _31.Scripts.Lifecycle.Interfaces;
 
-namespace _31.Scripts.Components.Movement.Controller
+namespace _31.Scripts.Components.Movement.Controller.Movement
 {
-    public class MovementController
+    public class MovementController : IUpdatable
     {
         private readonly IMovable _movable;
         private readonly IRotatable _rotatable;
@@ -16,7 +17,7 @@ namespace _31.Scripts.Components.Movement.Controller
             _movementInput = movementInput;
         }
 
-        public void Update()
+        public void Tick(float deltaTime)
         {
             _movementInput.Update();
             
